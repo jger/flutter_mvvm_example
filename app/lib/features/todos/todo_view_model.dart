@@ -10,17 +10,20 @@ part 'todo_view_model.g.dart';
 /// Extends Notifier following MVVM pattern (Riverpod 3.x)
 @riverpod
 class TodosViewModel extends _$TodosViewModel {
-  late final FirebaseService _service;
+  late FirebaseService _service;
 
   @override
   TodosState build() {
-    _service = ref.read(firebaseServiceProvider);
+    // watch hält firebaseServiceProvider am Leben (read + autoDispose → dispose → Stream geschlossen)
+    _service = ref.watch(firebaseServiceProvider);
     Future.microtask(_loadTodos);
     return TodosState(todos: [], isLoading: true);
   }
 
-  Future<void> _loadTodos() async {
-    state = state.copyWith(isLoading: true);
+  Future<void> _loadTodos({bool showFullScreenLoading = true}) async {
+    if (showFullScreenLoading) {
+      state = state.copyWith(isLoading: true);
+    }
     try {
       final todos = await _service.getTodos();
       state = state.copyWith(todos: todos, isLoading: false);
@@ -31,6 +34,8 @@ class TodosViewModel extends _$TodosViewModel {
       );
     }
   }
+
+  Future<void> refresh() => _loadTodos(showFullScreenLoading: false);
 
   Future<void> addTodo(String title) async {
     if (title.trim().isEmpty) return;

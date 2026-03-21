@@ -49,29 +49,52 @@ class TodosPage extends ConsumerWidget {
                     ),
                   ),
                 Expanded(
-                  child: state.isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : state.todos.isEmpty
-                          ? const Center(
-                              child: Text(
-                                'No todos yet. Add one above!',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey,
+                  child: RefreshIndicator(
+                    onRefresh: viewModel.refresh,
+                    child: state.isLoading && state.todos.isEmpty
+                        ? ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: [
+                              SizedBox(
+                                height:
+                                    MediaQuery.sizeOf(context).height * 0.35,
+                                child: const Center(
+                                  child: CircularProgressIndicator(),
                                 ),
                               ),
-                            )
-                          : ListView.builder(
-                              itemCount: state.todos.length,
-                              itemBuilder: (context, index) {
-                                final todo = state.todos[index];
-                                return _TodoItem(
-                                  todo: todo,
-                                  onToggle: () => viewModel.toggleTodo(todo),
-                                  onDelete: () => viewModel.deleteTodo(todo.id),
-                                );
-                              },
-                            ),
+                            ],
+                          )
+                        : state.todos.isEmpty
+                            ? ListView(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                children: const [
+                                  SizedBox(height: 120),
+                                  Center(
+                                    child: Text(
+                                      'No todos yet. Add one above!',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : ListView.builder(
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                itemCount: state.todos.length,
+                                itemBuilder: (context, index) {
+                                  final todo = state.todos[index];
+                                  return _TodoItem(
+                                    todo: todo,
+                                    onToggle: () =>
+                                        viewModel.toggleTodo(todo),
+                                    onDelete: () =>
+                                        viewModel.deleteTodo(todo.id),
+                                  );
+                                },
+                              ),
+                  ),
                 ),
               ],
             ),
