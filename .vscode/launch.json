@@ -17,6 +17,14 @@
             "type": "dart",
             "deviceId": "chrome"
         },
+        // Android
+        {
+            "name": "app (Android)",
+            "cwd": "app",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "emulator-5554"
+        },
         {
             "name": "app (profile mode)",
             "cwd": "app",
