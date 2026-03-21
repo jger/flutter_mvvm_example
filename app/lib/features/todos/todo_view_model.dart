@@ -1,48 +1,23 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/models/todo.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
 import '../../data/services/fake_firebase_service.dart';
+import '../../domain/models/todo.dart';
+import 'todo_providers.dart';
+import 'todo_state.dart';
 
-final firebaseServiceProvider = Provider<FakeFirebaseService>((ref) {
-  final service = FakeFirebaseService();
-  ref.onDispose(() => service.dispose());
-  return service;
-});
+part 'todo_view_model.g.dart';
 
-final todosViewModelProvider =
-    NotifierProvider<TodosViewModel, TodosState>(TodosViewModel.new);
-
-class TodosState {
-  final List<Todo> todos;
-  final bool isLoading;
-  final String? error;
-
-  TodosState({
-    required this.todos,
-    this.isLoading = false,
-    this.error,
-  });
-
-  TodosState copyWith({
-    List<Todo>? todos,
-    bool? isLoading,
-    String? error,
-  }) {
-    return TodosState(
-      todos: todos ?? this.todos,
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
-    );
-  }
-}
-
-class TodosViewModel extends Notifier<TodosState> {
+/// ViewModel manages state and business logic
+/// Extends Notifier following MVVM pattern (Riverpod 3.x)
+@riverpod
+class TodosViewModel extends _$TodosViewModel {
   late final FirebaseService _service;
 
   @override
   TodosState build() {
     _service = ref.read(firebaseServiceProvider);
-    _loadTodos();
-    return TodosState(todos: const []);
+    Future.microtask(_loadTodos);
+    return TodosState(todos: [], isLoading: true);
   }
 
   Future<void> _loadTodos() async {
