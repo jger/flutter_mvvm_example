@@ -1,7 +1,7 @@
+import 'package:app/domain/models/todo.dart';
+import 'package:app/features/todos/todo_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/models/todo.dart';
-import 'todo_view_model.dart';
 
 class TodosPage extends ConsumerWidget {
   const TodosPage({super.key});
@@ -20,11 +20,11 @@ class TodosPage extends ConsumerWidget {
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Column(
               children: [
                 _TodoInputField(
-                  onSubmitted: (title) => viewModel.addTodo(title),
+                  onSubmitted: viewModel.addTodo,
                 ),
                 const SizedBox(height: 16),
                 if (state.error != null)
@@ -83,9 +83,9 @@ class TodosPage extends ConsumerWidget {
 }
 
 class _TodoInputField extends StatefulWidget {
-  final void Function(String) onSubmitted;
 
   const _TodoInputField({required this.onSubmitted});
+  final void Function(String) onSubmitted;
 
   @override
   State<_TodoInputField> createState() => _TodoInputFieldState();
@@ -130,15 +130,15 @@ class _TodoInputFieldState extends State<_TodoInputField> {
 }
 
 class _TodoItem extends StatelessWidget {
-  final Todo todo;
-  final VoidCallback onToggle;
-  final VoidCallback onDelete;
 
   const _TodoItem({
     required this.todo,
     required this.onToggle,
     required this.onDelete,
   });
+  final Todo todo;
+  final VoidCallback onToggle;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {

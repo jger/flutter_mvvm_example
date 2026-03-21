@@ -1,15 +1,15 @@
-import '../../domain/models/todo.dart';
+import 'package:app/domain/models/todo.dart';
 
 class TodosState {
-  final List<Todo> todos;
-  final bool isLoading;
-  final String? error;
 
   TodosState({
     required this.todos,
     this.isLoading = false,
     this.error,
   });
+  final List<Todo> todos;
+  final bool isLoading;
+  final String? error;
 
   TodosState copyWith({
     List<Todo>? todos,
@@ -23,10 +23,3 @@ class TodosState {
     );
   }
 }
-
-
-
-
-
-
-

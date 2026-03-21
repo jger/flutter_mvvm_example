@@ -1,9 +1,8 @@
+import 'package:app/data/services/fake_firebase_service.dart';
+import 'package:app/domain/models/todo.dart';
+import 'package:app/features/todos/todo_providers.dart';
+import 'package:app/features/todos/todo_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../data/services/fake_firebase_service.dart';
-import '../../domain/models/todo.dart';
-import 'todo_providers.dart';
-import 'todo_state.dart';
 
 part 'todo_view_model.g.dart';
 
@@ -21,7 +20,7 @@ class TodosViewModel extends _$TodosViewModel {
   }
 
   Future<void> _loadTodos() async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
     try {
       final todos = await _service.getTodos();
       state = state.copyWith(todos: todos, isLoading: false);

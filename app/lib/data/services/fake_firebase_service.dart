@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../../domain/models/todo.dart';
+import 'package:app/domain/models/todo.dart';
 
 abstract class FirebaseService {
   Future<List<Todo>> getTodos();
@@ -9,8 +9,6 @@ abstract class FirebaseService {
 }
 
 class FakeFirebaseService implements FirebaseService {
-  final List<Todo> _todos = [];
-  final _controller = StreamController<List<Todo>>.broadcast();
 
   FakeFirebaseService() {
     _todos.addAll([
@@ -29,18 +27,20 @@ class FakeFirebaseService implements FirebaseService {
     ]);
     _controller.add(_todos);
   }
+  final List<Todo> _todos = [];
+  final _controller = StreamController<List<Todo>>.broadcast();
 
   Stream<List<Todo>> watchTodos() => _controller.stream;
 
   @override
   Future<List<Todo>> getTodos() async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future<void>.delayed(const Duration(milliseconds: 300));
     return List.unmodifiable(_todos);
   }
 
   @override
   Future<Todo> addTodo(String title) async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future<void>.delayed(const Duration(milliseconds: 200));
     final todo = Todo(
       id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: title,
@@ -54,7 +54,7 @@ class FakeFirebaseService implements FirebaseService {
 
   @override
   Future<Todo> updateTodo(Todo todo) async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future<void>.delayed(const Duration(milliseconds: 200));
     final index = _todos.indexWhere((t) => t.id == todo.id);
     if (index != -1) {
       _todos[index] = todo;
@@ -65,7 +65,7 @@ class FakeFirebaseService implements FirebaseService {
 
   @override
   Future<void> deleteTodo(String id) async {
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future<void>.delayed(const Duration(milliseconds: 200));
     _todos.removeWhere((t) => t.id == id);
     _controller.add(List.unmodifiable(_todos));
   }

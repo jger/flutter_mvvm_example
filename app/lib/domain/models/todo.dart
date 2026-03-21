@@ -1,8 +1,4 @@
 class Todo {
-  final String id;
-  final String title;
-  final bool isCompleted;
-  final DateTime createdAt;
 
   Todo({
     required this.id,
@@ -10,6 +6,10 @@ class Todo {
     required this.isCompleted,
     required this.createdAt,
   });
+  final String id;
+  final String title;
+  final bool isCompleted;
+  final DateTime createdAt;
 
   Todo copyWith({
     String? id,
