@@ -47,7 +47,7 @@ final class TodosViewModelProvider
   }
 }
 
-String _$todosViewModelHash() => r'2abbb28d6c32a3b9dbd8caf565f201321e4050af';
+String _$todosViewModelHash() => r'a06d77992dc0f6297d9e932c416b1cd73aee8934';
 
 /// ViewModel manages state and business logic
 /// Extends Notifier following MVVM pattern (Riverpod 3.x)

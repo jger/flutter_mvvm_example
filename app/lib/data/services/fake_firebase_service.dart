@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:app/domain/models/todo.dart';
 
 abstract class FirebaseService {
+  Stream<List<Todo>> watchTodos();
   Future<List<Todo>> getTodos();
   Future<Todo> addTodo(String title);
   Future<Todo> updateTodo(Todo todo);
@@ -9,9 +10,8 @@ abstract class FirebaseService {
 }
 
 class FakeFirebaseService implements FirebaseService {
-
   FakeFirebaseService() {
-    _todos.addAll([
+    _todos.addAll(<Todo>[
       Todo(
         id: '1',
         title: 'Learn MVVM Architecture',
@@ -30,6 +30,7 @@ class FakeFirebaseService implements FirebaseService {
   final List<Todo> _todos = [];
   final _controller = StreamController<List<Todo>>.broadcast();
 
+  @override
   Stream<List<Todo>> watchTodos() => _controller.stream;
 
   @override

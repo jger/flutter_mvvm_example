@@ -1,5 +1,9 @@
+import 'package:app/core/theme/theme_mode_provider.dart';
+import 'package:app/core/ui/ui_constants.dart';
 import 'package:app/domain/models/todo.dart';
+import 'package:app/features/todos/todo_state.dart';
 import 'package:app/features/todos/todo_view_model.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,44 +12,98 @@ class TodosPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(todosViewModelProvider);
-    final viewModel = ref.read(todosViewModelProvider.notifier);
+    final TodosState state = ref.watch(todosViewModelProvider);
+    final TodosViewModel viewModel = ref.read(todosViewModelProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Todo List'),
+        title: Text('appBarTitle'.tr()),
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            tooltip: 'themeToggleTooltip'.tr(),
+            onPressed: () {
+              final Brightness platform =
+                  MediaQuery.platformBrightnessOf(context);
+              ref.read(appThemeModeProvider.notifier).toggle(platform);
+            },
+            icon: Icon(
+              Theme.of(context).brightness == Brightness.dark
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+          ),
+          PopupMenuButton<Locale>(
+            icon: const Icon(Icons.language),
+            onSelected: (Locale locale) => context.setLocale(locale),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<Locale>>[
+              PopupMenuItem<Locale>(
+                value: const Locale('en'),
+                child: Text('languageEnglish'.tr()),
+              ),
+              PopupMenuItem<Locale>(
+                value: const Locale('de'),
+                child: Text('languageGerman'.tr()),
+              ),
+              PopupMenuItem<Locale>(
+                value: const Locale('el'),
+                child: Text('languageGreek'.tr()),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
+          constraints:
+              const BoxConstraints(maxWidth: UiConstants.maxContentWidth),
           child: Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(UiConstants.spacingMd),
             child: Column(
-              children: [
-                _TodoInputField(
-                  onSubmitted: viewModel.addTodo,
+              children: <Widget>[
+                Semantics(
+                  label: 'addTodoHint'.tr(),
+                  textField: true,
+                  child: _TodoInputField(
+                    hintText: 'addTodoHint'.tr(),
+                    onSubmitted: viewModel.addTodo,
+                  ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: UiConstants.spacingMd),
                 if (state.error != null)
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade100,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.error, color: Colors.red.shade700),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            state.error!,
-                            style: TextStyle(color: Colors.red.shade700),
+                  Semantics(
+                    label: 'errorBannerLabel'.tr(),
+                    liveRegion: true,
+                    child: Container(
+                      padding: const EdgeInsets.all(UiConstants.spacingSm),
+                      margin:
+                          const EdgeInsets.only(bottom: UiConstants.spacingMd),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.errorContainer,
+                        borderRadius:
+                            BorderRadius.circular(UiConstants.radiusSm),
+                      ),
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.error,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onErrorContainer,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: UiConstants.spacingXs),
+                          Expanded(
+                            child: Text(
+                              state.error!,
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onErrorContainer,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 Expanded(
@@ -54,7 +112,7 @@ class TodosPage extends ConsumerWidget {
                     child: state.isLoading && state.todos.isEmpty
                         ? ListView(
                             physics: const AlwaysScrollableScrollPhysics(),
-                            children: [
+                            children: <Widget>[
                               SizedBox(
                                 height:
                                     MediaQuery.sizeOf(context).height * 0.35,
@@ -65,35 +123,35 @@ class TodosPage extends ConsumerWidget {
                             ],
                           )
                         : state.todos.isEmpty
-                            ? ListView(
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                children: const [
-                                  SizedBox(height: 120),
-                                  Center(
-                                    child: Text(
-                                      'No todos yet. Add one above!',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
+                        ? ListView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            children: <Widget>[
+                              const SizedBox(height: 120),
+                              Center(
+                                child: Text(
+                                  'emptyState'.tr(),
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
-                                ],
-                              )
-                            : ListView.builder(
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                itemCount: state.todos.length,
-                                itemBuilder: (context, index) {
-                                  final todo = state.todos[index];
-                                  return _TodoItem(
-                                    todo: todo,
-                                    onToggle: () =>
-                                        viewModel.toggleTodo(todo),
-                                    onDelete: () =>
-                                        viewModel.deleteTodo(todo.id),
-                                  );
-                                },
+                                ),
                               ),
+                            ],
+                          )
+                        : ListView.builder(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: state.todos.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final Todo todo = state.todos[index];
+                              return _TodoItem(
+                                todo: todo,
+                                onToggle: () => viewModel.toggleTodo(todo),
+                                onDelete: () => viewModel.deleteTodo(todo.id),
+                              );
+                            },
+                          ),
                   ),
                 ),
               ],
@@ -106,8 +164,8 @@ class TodosPage extends ConsumerWidget {
 }
 
 class _TodoInputField extends StatefulWidget {
-
-  const _TodoInputField({required this.onSubmitted});
+  const _TodoInputField({required this.hintText, required this.onSubmitted});
+  final String hintText;
   final void Function(String) onSubmitted;
 
   @override
@@ -115,7 +173,7 @@ class _TodoInputField extends StatefulWidget {
 }
 
 class _TodoInputFieldState extends State<_TodoInputField> {
-  final _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void dispose() {
@@ -128,9 +186,9 @@ class _TodoInputFieldState extends State<_TodoInputField> {
     return TextField(
       controller: _controller,
       decoration: InputDecoration(
-        hintText: 'Add a new todo...',
+        hintText: widget.hintText,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(UiConstants.radiusSm),
         ),
         suffixIcon: IconButton(
           icon: const Icon(Icons.add),
@@ -142,7 +200,7 @@ class _TodoInputFieldState extends State<_TodoInputField> {
           },
         ),
       ),
-      onSubmitted: (value) {
+      onSubmitted: (String value) {
         if (value.trim().isNotEmpty) {
           widget.onSubmitted(value);
           _controller.clear();
@@ -153,7 +211,6 @@ class _TodoInputFieldState extends State<_TodoInputField> {
 }
 
 class _TodoItem extends StatelessWidget {
-
   const _TodoItem({
     required this.todo,
     required this.onToggle,
@@ -165,25 +222,34 @@ class _TodoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: Checkbox(
-          value: todo.isCompleted,
-          onChanged: (_) => onToggle(),
-        ),
-        title: Text(
-          todo.title,
-          style: TextStyle(
-            decoration: todo.isCompleted
-                ? TextDecoration.lineThrough
-                : TextDecoration.none,
-            color: todo.isCompleted ? Colors.grey : null,
+    return Semantics(
+      label: todo.title,
+      checked: todo.isCompleted,
+      child: Card(
+        margin: const EdgeInsets.only(bottom: UiConstants.spacingXs),
+        child: ListTile(
+          leading: Checkbox(
+            value: todo.isCompleted,
+            onChanged: (_) => onToggle(),
           ),
-        ),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: onDelete,
+          title: Text(
+            todo.title,
+            style: TextStyle(
+              decoration: todo.isCompleted
+                  ? TextDecoration.lineThrough
+                  : TextDecoration.none,
+              color: todo.isCompleted
+                  ? Theme.of(context).colorScheme.onSurfaceVariant
+                  : null,
+            ),
+          ),
+          trailing: IconButton(
+            icon: Icon(
+              Icons.delete,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            onPressed: onDelete,
+          ),
         ),
       ),
     );

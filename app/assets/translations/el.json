@@ -1,0 +1,11 @@
+{
+  "appTitle": "Λίστα εργασιών",
+  "appBarTitle": "Εργασίες",
+  "addTodoHint": "Προσθήκη νέας εργασίας …",
+  "emptyState": "Δεν υπάρχουν εργασίες. Προσθέστε μία παραπάνω!",
+  "errorBannerLabel": "Σφάλμα",
+  "languageEnglish": "Αγγλικά",
+  "languageGerman": "Γερμανικά",
+  "languageGreek": "Ελληνικά",
+  "themeToggleTooltip": "Εναλλαγή φωτεινού ή σκοτεινού θέματος"
+}

@@ -54,4 +54,45 @@ final class FirebaseServiceProvider
   }
 }
 
-String _$firebaseServiceHash() => r'2b85db4884ea166abf8351a23bbfe358ad43feb8';
+String _$firebaseServiceHash() => r'8c464474b6d0bab1c69d4630c756a235d4a54a3d';
+
+@ProviderFor(todoRepository)
+const todoRepositoryProvider = TodoRepositoryProvider._();
+
+final class TodoRepositoryProvider
+    extends $FunctionalProvider<TodoRepository, TodoRepository, TodoRepository>
+    with $Provider<TodoRepository> {
+  const TodoRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'todoRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$todoRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<TodoRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  TodoRepository create(Ref ref) {
+    return todoRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(TodoRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TodoRepository>(value),
+    );
+  }
+}
+
+String _$todoRepositoryHash() => r'2930e7fdc7220c71e992741bb2d3b10f0dcc1c8a';

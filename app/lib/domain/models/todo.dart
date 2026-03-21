@@ -1,6 +1,7 @@
-class Todo {
+import 'package:equatable/equatable.dart';
 
-  Todo({
+class Todo extends Equatable {
+  const Todo({
     required this.id,
     required this.title,
     required this.isCompleted,
@@ -24,4 +25,7 @@ class Todo {
       createdAt: createdAt ?? this.createdAt,
     );
   }
+
+  @override
+  List<Object?> get props => <Object?>[id, title, isCompleted, createdAt];
 }

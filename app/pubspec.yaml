@@ -1,5 +1,5 @@
 name: app
-description: "A new Flutter project."
+description: "MVVM-Todo-Demo mit Riverpod 3, Fake-Backend und Feature-Struktur."
 publish_to: 'none'
 version: 0.1.0
 
@@ -7,10 +7,13 @@ environment:
   sdk: ^3.10.0
 
 dependencies:
+  easy_localization: ^3.0.7+1
+  equatable: ^2.0.7
   flutter:
     sdk: flutter
   flutter_riverpod: ^3.0.3
   riverpod_annotation: ^3.0.3
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
@@ -21,3 +24,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/translations/

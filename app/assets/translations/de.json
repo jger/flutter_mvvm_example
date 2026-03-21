@@ -1,0 +1,11 @@
+{
+  "appTitle": "Aufgabenliste",
+  "appBarTitle": "Aufgabenliste",
+  "addTodoHint": "Neue Aufgabe hinzufügen …",
+  "emptyState": "Noch keine Aufgaben. Oben hinzufügen!",
+  "errorBannerLabel": "Fehler",
+  "languageEnglish": "Englisch",
+  "languageGerman": "Deutsch",
+  "languageGreek": "Griechisch",
+  "themeToggleTooltip": "Helles oder dunkles Design umschalten"
+}

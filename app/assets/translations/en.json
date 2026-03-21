@@ -1,0 +1,11 @@
+{
+  "appTitle": "Todo List",
+  "appBarTitle": "Todo List",
+  "addTodoHint": "Add a new todo...",
+  "emptyState": "No todos yet. Add one above!",
+  "errorBannerLabel": "Error",
+  "languageEnglish": "English",
+  "languageGerman": "German",
+  "languageGreek": "Greek",
+  "themeToggleTooltip": "Toggle light or dark theme"
+}
