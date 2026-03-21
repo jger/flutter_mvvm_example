@@ -13,12 +13,23 @@ void main() {
     service.dispose();
   });
 
+  test('getTodosPage returns slice', () async {
+    final FakeFirebaseService service = FakeFirebaseService(
+      actionDelay: Duration.zero,
+      fetchDelay: Duration.zero,
+    );
+    final TodoRepository repo = TodoRepository(service);
+    expect((await repo.getTodosPage(offset: 0, limit: 1)).length, 1);
+    expect((await repo.getTodosPage(offset: 2, limit: 5)).length, 0);
+    service.dispose();
+  });
+
   test('watchTodos emits on add', () async {
     final FakeFirebaseService service = FakeFirebaseService();
     final TodoRepository repo = TodoRepository(service);
-    final Future<List<Todo>> next = repo.watchTodos().first;
+    final Future<List<Todo>> afterAdd = repo.watchTodos().skip(1).first;
     await repo.addTodo('x');
-    expect((await next).length, 3);
+    expect((await afterAdd).length, 3);
     service.dispose();
   });
 }

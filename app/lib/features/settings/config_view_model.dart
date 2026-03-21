@@ -1,0 +1,20 @@
+import 'package:app/core/theme/theme_mode_provider.dart';
+import 'package:app/features/settings/config_state.dart';
+import 'package:flutter/material.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'config_view_model.g.dart';
+
+/// ViewModel for app configuration (theme; locale is applied in the view via EasyLocalization).
+@riverpod
+class ConfigViewModel extends _$ConfigViewModel {
+  @override
+  ConfigState build() {
+    final ThemeMode mode = ref.watch(appThemeModeProvider);
+    return ConfigState(themeMode: mode);
+  }
+
+  Future<void> toggleTheme(Brightness platformBrightness) {
+    return ref.read(appThemeModeProvider.notifier).toggle(platformBrightness);
+  }
+}

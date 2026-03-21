@@ -9,6 +9,47 @@ part of 'todo_providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(todoInitialUi)
+const todoInitialUiProvider = TodoInitialUiProvider._();
+
+final class TodoInitialUiProvider
+    extends $FunctionalProvider<TodoInitialUi, TodoInitialUi, TodoInitialUi>
+    with $Provider<TodoInitialUi> {
+  const TodoInitialUiProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'todoInitialUiProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$todoInitialUiHash();
+
+  @$internal
+  @override
+  $ProviderElement<TodoInitialUi> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  TodoInitialUi create(Ref ref) {
+    return todoInitialUi(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(TodoInitialUi value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TodoInitialUi>(value),
+    );
+  }
+}
+
+String _$todoInitialUiHash() => r'a9c33091d118a122fac64acc45374dd7df797bc9';
+
 @ProviderFor(firebaseService)
 const firebaseServiceProvider = FirebaseServiceProvider._();
 

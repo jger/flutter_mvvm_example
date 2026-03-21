@@ -7,6 +7,15 @@ class Todo extends Equatable {
     required this.isCompleted,
     required this.createdAt,
   });
+
+  factory Todo.fromJson(Map<String, dynamic> json) {
+    return Todo(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      isCompleted: json['isCompleted'] as bool,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+    );
+  }
   final String id;
   final String title;
   final bool isCompleted;
@@ -28,4 +37,13 @@ class Todo extends Equatable {
 
   @override
   List<Object?> get props => <Object?>[id, title, isCompleted, createdAt];
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'id': id,
+      'title': title,
+      'isCompleted': isCompleted,
+      'createdAt': createdAt.toIso8601String(),
+    };
+  }
 }

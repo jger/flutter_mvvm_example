@@ -8,18 +8,15 @@ part of 'todo_view_model.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// ViewModel manages state and business logic
-/// Extends Notifier following MVVM pattern (Riverpod 3.x)
+/// ViewModel manages state and business logic (MVVM + Riverpod 3).
 
 @ProviderFor(TodosViewModel)
 const todosViewModelProvider = TodosViewModelProvider._();
 
-/// ViewModel manages state and business logic
-/// Extends Notifier following MVVM pattern (Riverpod 3.x)
+/// ViewModel manages state and business logic (MVVM + Riverpod 3).
 final class TodosViewModelProvider
     extends $NotifierProvider<TodosViewModel, TodosState> {
-  /// ViewModel manages state and business logic
-  /// Extends Notifier following MVVM pattern (Riverpod 3.x)
+  /// ViewModel manages state and business logic (MVVM + Riverpod 3).
   const TodosViewModelProvider._()
     : super(
         from: null,
@@ -47,10 +44,9 @@ final class TodosViewModelProvider
   }
 }
 
-String _$todosViewModelHash() => r'a06d77992dc0f6297d9e932c416b1cd73aee8934';
+String _$todosViewModelHash() => r'd29b6b5cfe49102ad76ef5b3a8d1562ab092fa4c';
 
-/// ViewModel manages state and business logic
-/// Extends Notifier following MVVM pattern (Riverpod 3.x)
+/// ViewModel manages state and business logic (MVVM + Riverpod 3).
 
 abstract class _$TodosViewModel extends $Notifier<TodosState> {
   TodosState build();

@@ -1,8 +1,14 @@
 import 'package:app/data/repositories/todo_repository.dart';
 import 'package:app/data/services/fake_firebase_service.dart';
+import 'package:app/domain/todo_filters.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'todo_providers.g.dart';
+
+@riverpod
+TodoInitialUi todoInitialUi(Ref ref) {
+  return TodoInitialUi.defaults;
+}
 
 @riverpod
 FakeFirebaseService firebaseService(Ref ref) {
