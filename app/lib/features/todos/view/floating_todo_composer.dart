@@ -3,7 +3,6 @@ import 'dart:ui' show lerpDouble;
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mvvm_example/core/ui/ui_constants.dart';
 import 'package:flutter_mvvm_example/features/todos/view/widgets/composer_constants.dart';
 import 'package:flutter_mvvm_example/features/todos/view/widgets/expressive_task_panel.dart';
@@ -60,41 +59,15 @@ class _FloatingTodoComposerState extends State<FloatingTodoComposer>
 
   void _onFocusChanged() => setState(() {});
 
-  void _syncImeChrome() {
-    if (!mounted) {
-      return;
-    }
-    // The system IME cannot be themed reliably in Flutter; navigation bar follows
-    // the theme (ColorScheme.surfaceContainerLow).
-    final ColorScheme scheme = Theme.of(context).colorScheme;
-    if (_controller.isCompleted) {
-      SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(
-          systemNavigationBarColor: scheme.surfaceContainerLow,
-          systemNavigationBarIconBrightness:
-              scheme.brightness == Brightness.dark
-              ? Brightness.light
-              : Brightness.dark,
-          systemNavigationBarContrastEnforced: false,
-        ),
-      );
-    } else {
-      SystemChrome.restoreSystemUIOverlays();
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     _focus.addListener(_onFocusChanged);
-    _controller.addListener(_syncImeChrome);
   }
 
   @override
   void dispose() {
-    SystemChrome.restoreSystemUIOverlays();
     _detachFocusWhenPanelListener();
-    _controller.removeListener(_syncImeChrome);
     _focus.removeListener(_onFocusChanged);
     _controller.dispose();
     _focus.dispose();
