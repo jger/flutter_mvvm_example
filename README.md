@@ -12,8 +12,21 @@ Sample app that demonstrates **MVVM with Riverpod**, a **fake backend** (Firebas
 | **Navigation** | `go_router`: `/` (todos), `/config` (settings) |
 | **i18n** | easy_localization — EN / DE / EL |
 | **Logging** | `AppLogger` in `core/logging` |
+| **Domain** | `Todo`, `TodoFilter` / `TodoSort`, sealed **`TodoFailure`**; repository maps services to `TodoFailure` for callers |
+| **Errors & recovery** | User-visible messages from failures; snackbar + **retry** for failed mutations (`pendingRetry` on `TodosViewModel`) |
+| **a11y** | **`Accessibility Semantics`** region for the scrollable list (localized label); rows expose title and completion; validate with TalkBack / VoiceOver |
+| **Demo config** | **`AppConfig`**: `DEMO_MODE` via `--dart-define` (default `true`); no API keys in source |
+| **Tests** | Unit (view models + overrides), widget, **golden** (`golden_toolkit`, tag `golden`); Linux goldens via `make goldens-*` / Docker to match CI |
 
 Todos: filter, sort, edit title (dialog), pull-to-refresh, max content width on web.
+
+## Documentation
+
+**Dart API reference (dartdoc)** for `package:flutter_mvvm_example` — libraries, classes, and public members generated from `app/lib/`:
+
+**[flutter_mvvm_example — browse API docs](https://jger.github.io/flutter_mvvm_example/index.html)**
+
+Deployment is handled by GitHub Actions; see the **GitHub Actions** section at the end of this README.
 
 ## Architecture
 
@@ -61,8 +74,6 @@ fvm flutter test --coverage
 fvm flutter analyze
 ```
 
-**API docs (HTML):** In the repo **Settings → Pages**, set **Source** to **GitHub Actions**. On each push to `main` that touches `app/lib/` (or manually via **Actions → API documentation → Run workflow**), **`.github/workflows/docs.yml`** runs `dart doc` in `app/` and deploys the site (package API under `package:flutter_mvvm_example/…`). The public URL is **`https://jger.github.io/flutter_mvvm_example/`**.
-
 - **Unit / VM tests**: view models with `ProviderScope` overrides (e.g. fake service with zero delay).
 - **Widget tests**: `MaterialApp(home: TodosPage)` and interaction tests.
 - **Golden tests** (opt-in tag `golden`): baseline PNGs under `test/goldens/`. Fonts load via `test/flutter_test_config.dart` and `golden_toolkit` so text does not render as tofu.
@@ -86,9 +97,7 @@ git add app/test/goldens/ && git commit -m "chore: update goldens for Linux CI [
 
 `make goldens-test` runs the comparison inside the container without updating files (mirrors the CI check). After changing `docker/goldens/Dockerfile` or the FVM Flutter version, run `make goldens-build` to rebuild the image.
 
-**CI**: **`.github/workflows/docs.yml`** publishes dartdoc to GitHub Pages (same FVM Flutter as the app). **`.github/workflows/flutter.yml`** reads Flutter **3.41.5** from FVM (`jq` on `app/.fvm/fvm_config.json` → `subosito/flutter-action`), runs `flutter test` with **`--exclude-tags golden`** (coverage + analyze + translation check). **`.github/workflows/golden.yml`** + **`.github/actions/flutter-golden-tests`**: `flutter test --tags golden` on `ubuntu-latest`. Translation keys: `fvm dart run tool/check_translation_keys.dart` (de/el must match `en.json`). **`FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`** for JS-based actions (see GitHub changelog on Node 20 deprecation).
-
-## Accessibility
+## Accessibility (a11y)
 
 The todo list uses a **`Semantics`** region with a localized label for the scrollable list. Individual todo rows expose title and completion to assistive tech. Prefer testing with TalkBack / VoiceOver when changing list or dialog behavior.
 
@@ -99,3 +108,13 @@ The todo list uses a **`Semantics`** region with a localized label for the scrol
 ## Releases (semantic-release)
 
 Versions and GitHub Releases are driven by **[semantic-release](https://github.com/semantic-release/semantic-release)** at the repo root (`package.json`, `release.config.cjs`). **Use [Conventional Commits](https://www.conventionalcommits.org/)** (`feat:`, `fix:`, `chore:`, …) on `main`/`master` so releases and changelog entries are generated correctly. The release workflow bumps **`app/pubspec.yaml`** and commits `CHANGELOG.md` with **`[skip ci]`** on the release commit.
+
+## GitHub Actions
+
+| Workflow | Role |
+|----------|------|
+| **`.github/workflows/docs.yml`** | Runs `dart doc` in `app/` when pushes to `main` touch `app/lib/`, or manually via **Actions → API documentation → Run workflow**. Publishes HTML API docs to GitHub Pages (same FVM Flutter as the app). Set **Settings → Pages → Build and deployment → Source** to **GitHub Actions** so deploy works. Live docs: [flutter_mvvm_example API](https://jger.github.io/flutter_mvvm_example/index.html). |
+| **`.github/workflows/flutter.yml`** | Reads Flutter **3.41.5** from FVM (`jq` on `app/.fvm/fvm_config.json` → `subosito/flutter-action`). Runs `flutter test` with **`--exclude-tags golden`**, coverage, `flutter analyze`, and `tool/check_translation_keys.dart` (de/el must match `en.json`). |
+| **`.github/workflows/golden.yml`** + **`.github/actions/flutter-golden-tests`** | `flutter test --tags golden` on `ubuntu-latest`. |
+
+**`FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`** is set for JS-based actions (see GitHub’s Node 20 deprecation notes).
