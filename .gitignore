@@ -1,4 +1,5 @@
 docs/
+app/doc/
 /dev.md
 /mvvm.md
 node_modules/

@@ -8,13 +8,17 @@ part of 'app_logger_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Provides a shared [AppLogger] instance.
 
 @ProviderFor(appLogger)
 const appLoggerProvider = AppLoggerProvider._();
 
+/// Provides a shared [AppLogger] instance.
+
 final class AppLoggerProvider
     extends $FunctionalProvider<AppLogger, AppLogger, AppLogger>
     with $Provider<AppLogger> {
+  /// Provides a shared [AppLogger] instance.
   const AppLoggerProvider._()
     : super(
         from: null,

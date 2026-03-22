@@ -8,13 +8,17 @@ part of 'todo_providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Default or overridden initial filter/sort (overridden in `main.dart`).
 
 @ProviderFor(todoInitialUi)
 const todoInitialUiProvider = TodoInitialUiProvider._();
 
+/// Default or overridden initial filter/sort (overridden in `main.dart`).
+
 final class TodoInitialUiProvider
     extends $FunctionalProvider<TodoInitialUi, TodoInitialUi, TodoInitialUi>
     with $Provider<TodoInitialUi> {
+  /// Default or overridden initial filter/sort (overridden in `main.dart`).
   const TodoInitialUiProvider._()
     : super(
         from: null,
@@ -50,8 +54,12 @@ final class TodoInitialUiProvider
 
 String _$todoInitialUiHash() => r'a9c33091d118a122fac64acc45374dd7df797bc9';
 
+/// Shared in-memory backend; disposed with the provider.
+
 @ProviderFor(firebaseService)
 const firebaseServiceProvider = FirebaseServiceProvider._();
+
+/// Shared in-memory backend; disposed with the provider.
 
 final class FirebaseServiceProvider
     extends
@@ -61,6 +69,7 @@ final class FirebaseServiceProvider
           FakeFirebaseService
         >
     with $Provider<FakeFirebaseService> {
+  /// Shared in-memory backend; disposed with the provider.
   const FirebaseServiceProvider._()
     : super(
         from: null,
@@ -97,12 +106,17 @@ final class FirebaseServiceProvider
 
 String _$firebaseServiceHash() => r'8c464474b6d0bab1c69d4630c756a235d4a54a3d';
 
+/// Repository bound to [firebaseServiceProvider].
+
 @ProviderFor(todoRepository)
 const todoRepositoryProvider = TodoRepositoryProvider._();
+
+/// Repository bound to [firebaseServiceProvider].
 
 final class TodoRepositoryProvider
     extends $FunctionalProvider<TodoRepository, TodoRepository, TodoRepository>
     with $Provider<TodoRepository> {
+  /// Repository bound to [firebaseServiceProvider].
   const TodoRepositoryProvider._()
     : super(
         from: null,

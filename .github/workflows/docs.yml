@@ -1,0 +1,54 @@
+# Publishes `dart doc` output for `app/` to GitHub Pages (enable Pages → Source: GitHub Actions).
+name: API documentation
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'app/lib/**'
+      - 'app/pubspec.yaml'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - name: Flutter version (FVM)
+        id: fvm
+        working-directory: app
+        run: echo "flutter_version=$(jq -r '.flutterSdkVersion' .fvm/fvm_config.json)" >> "$GITHUB_OUTPUT"
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ steps.fvm.outputs.flutter_version }}
+          cache: true
+      - run: flutter pub get
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - name: Generate dartdoc
+        run: dart doc .
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: app/doc/api
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

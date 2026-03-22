@@ -8,12 +8,15 @@ part of 'theme_mode_provider.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Persists and exposes the app [ThemeMode] via SharedPreferences.
 
 @ProviderFor(AppThemeMode)
 const appThemeModeProvider = AppThemeModeProvider._();
 
+/// Persists and exposes the app [ThemeMode] via SharedPreferences.
 final class AppThemeModeProvider
     extends $NotifierProvider<AppThemeMode, ThemeMode> {
+  /// Persists and exposes the app [ThemeMode] via SharedPreferences.
   const AppThemeModeProvider._()
     : super(
         from: null,
@@ -42,6 +45,8 @@ final class AppThemeModeProvider
 }
 
 String _$appThemeModeHash() => r'5a6365dc81ec36770d635fe79a45f59ae16eac11';
+
+/// Persists and exposes the app [ThemeMode] via SharedPreferences.
 
 abstract class _$AppThemeMode extends $Notifier<ThemeMode> {
   ThemeMode build();
