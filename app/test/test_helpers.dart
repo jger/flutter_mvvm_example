@@ -25,7 +25,7 @@ Future<void> pumpUntilFound(WidgetTester tester, Finder finder) async {
   expect(finder, findsOneWidget);
 }
 
-/// Waits for [FakeFirebaseService] seed todos + paged load (avoids spinner-only goldens).
+/// Waits for FakeFirebaseService seed todos + paged load (avoids spinner-only goldens).
 Future<void> pumpUntilFakeTodoListRendered(WidgetTester tester) async {
   final Finder checkboxes = find.byType(Checkbox);
   for (int i = 0; i < 120; i++) {
