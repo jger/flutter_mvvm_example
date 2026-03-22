@@ -93,6 +93,7 @@ class TodosViewModel extends _$TodosViewModel {
     }
   }
 
+  /// Loads the next page when scrolling near the end.
   Future<void> loadMore() async {
     if (!state.hasMore || state.isLoadingMore) {
       return;
@@ -127,12 +128,14 @@ class TodosViewModel extends _$TodosViewModel {
     }
   }
 
+  /// Updates the list filter and reloads the first page.
   void setFilter(TodoFilter filter) {
     state = state.copyWith(filter: filter);
     unawaited(_saveDisplayPrefs());
     unawaited(_reloadFirstPage());
   }
 
+  /// Updates the sort order and reloads the first page.
   void setSort(TodoSort sort) {
     state = state.copyWith(sort: sort);
     unawaited(_saveDisplayPrefs());
@@ -145,6 +148,7 @@ class TodosViewModel extends _$TodosViewModel {
     await prefs.setString('todo_sort', state.sort.name);
   }
 
+  /// Pull-to-refresh: reloads full list and first page.
   Future<void> refresh() async {
     state = state.copyWith(isRefreshing: true);
     try {
@@ -172,6 +176,7 @@ class TodosViewModel extends _$TodosViewModel {
     }
   }
 
+  /// Adds a todo; ignores blank [title].
   Future<void> addTodo(String title) async {
     if (title.trim().isEmpty) {
       return;
@@ -203,6 +208,7 @@ class TodosViewModel extends _$TodosViewModel {
     }
   }
 
+  /// Toggles completion for [todo].
   Future<void> toggleTodo(Todo todo) async {
     try {
       final Todo updated = todo.copyWith(isCompleted: !todo.isCompleted);
@@ -231,6 +237,7 @@ class TodosViewModel extends _$TodosViewModel {
     }
   }
 
+  /// Deletes the todo with [id].
   Future<void> deleteTodo(String id) async {
     try {
       await _repo.deleteTodo(id);
@@ -255,6 +262,7 @@ class TodosViewModel extends _$TodosViewModel {
     }
   }
 
+  /// Updates a todo title; ignores blank [newTitle].
   Future<void> updateTodoTitle(String id, String newTitle) async {
     final String trimmed = newTitle.trim();
     if (trimmed.isEmpty) {
@@ -296,6 +304,7 @@ class TodosViewModel extends _$TodosViewModel {
     }
   }
 
+  /// Replays the last failed mutation stored on state.
   Future<void> retryLastFailed() async {
     final TodoOperation? op = state.pendingRetry;
     if (op == null) {
@@ -314,6 +323,7 @@ class TodosViewModel extends _$TodosViewModel {
     }
   }
 
+  /// Clears the pending retry flag without retrying.
   void dismissRetry() {
     state = state.copyWith(pendingRetry: null);
   }

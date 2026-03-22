@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 
+/// Single todo item in the domain model.
 class Todo extends Equatable {
+  /// Creates a todo with required fields.
   const Todo({
     required this.id,
     required this.title,
@@ -8,6 +10,7 @@ class Todo extends Equatable {
     required this.createdAt,
   });
 
+  /// Deserializes from JSON map keys matching [toJson].
   factory Todo.fromJson(Map<String, dynamic> json) {
     return Todo(
       id: json['id'] as String,
@@ -16,11 +19,19 @@ class Todo extends Equatable {
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
   }
+  /// Stable identifier.
   final String id;
+
+  /// User-visible title.
   final String title;
+
+  /// Whether the todo is done.
   final bool isCompleted;
+  
+  /// Creation timestamp (UTC or local per serialization).
   final DateTime createdAt;
 
+  /// Returns a copy with any field replaced.
   Todo copyWith({
     String? id,
     String? title,
@@ -38,6 +49,7 @@ class Todo extends Equatable {
   @override
   List<Object?> get props => <Object?>[id, title, isCompleted, createdAt];
 
+  /// JSON map for persistence APIs.
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'id': id,

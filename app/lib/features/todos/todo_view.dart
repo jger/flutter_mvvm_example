@@ -10,7 +10,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+/// Main todo list screen with composer and settings entry.
 class TodosPage extends HookConsumerWidget {
+  /// Creates the todos page.
   const TodosPage({super.key});
 
   @override

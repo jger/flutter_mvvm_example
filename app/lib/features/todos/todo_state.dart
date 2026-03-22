@@ -10,40 +10,60 @@ sealed class TodoOperation extends Equatable {
   List<Object?> get props => <Object?>[];
 }
 
+/// Pending retry for a failed add with this [title].
 final class TodoAddOp extends TodoOperation {
+  /// Creates a pending add retry.
   const TodoAddOp(this.title);
+
+  /// Title text to resubmit.
   final String title;
 
   @override
   List<Object?> get props => <Object?>[title];
 }
 
+/// Pending retry for a failed completion toggle on [todo].
 final class TodoToggleOp extends TodoOperation {
+  /// Creates a pending toggle retry.
   const TodoToggleOp(this.todo);
+
+  /// Domain item state before retry.
   final Todo todo;
 
   @override
   List<Object?> get props => <Object?>[todo];
 }
 
+/// Pending retry for a failed delete of todo [id].
 final class TodoDeleteOp extends TodoOperation {
+  /// Creates a pending delete retry.
   const TodoDeleteOp(this.id);
+
+  /// Target item id.
   final String id;
 
   @override
   List<Object?> get props => <Object?>[id];
 }
 
+/// Pending retry for a failed title edit.
 final class TodoEditTitleOp extends TodoOperation {
+  /// Creates a pending title-edit retry.
   const TodoEditTitleOp({required this.id, required this.newTitle});
+
+  /// Item id to update.
   final String id;
+
+  /// New title text.
   final String newTitle;
 
   @override
   List<Object?> get props => <Object?>[id, newTitle];
 }
 
+/// View state for the todo list (paging, errors, retry).
 class TodosState extends Equatable {
+  /// Creates state for the todos screen.
   const TodosState({
     required this.allTodos,
     required this.todos,
@@ -63,14 +83,31 @@ class TodosState extends Equatable {
 
   /// Loaded slice(s) from the repository paged query for the current filter/sort.
   final List<Todo> todos;
+  /// Initial full load in progress.
   final bool isLoading;
+
+  /// Pull-to-refresh in progress.
   final bool isRefreshing;
+
+  /// Last error message, if any.
   final String? error;
+
+  /// Active list filter.
   final TodoFilter filter;
+
+  /// Active sort order.
   final TodoSort sort;
+
+  /// Operation to retry after a transient failure.
   final TodoOperation? pendingRetry;
+
+  /// Whether more pages can be loaded.
   final bool hasMore;
+
+  /// Next page fetch in progress.
   final bool isLoadingMore;
+  
+  /// Page size for repository paged loads.
   final int pageSize;
 
   static const Object _unsetError = Object();
@@ -78,6 +115,7 @@ class TodosState extends Equatable {
   /// Paged rows for the list (already filtered/sorted by the repository).
   List<Todo> get visibleTodos => todos;
 
+  /// Returns a copy with optional fields replaced.
   TodosState copyWith({
     List<Todo>? allTodos,
     List<Todo>? todos,

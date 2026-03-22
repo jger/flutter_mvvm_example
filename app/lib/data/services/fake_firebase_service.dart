@@ -2,8 +2,12 @@ import 'dart:async';
 import 'package:app/domain/models/todo.dart';
 import 'package:app/domain/todo_filters.dart';
 
+/// Contract for todo backend access (real Firebase or in-memory fake).
 abstract class FirebaseService {
+  /// Emits the current todo list whenever it changes.
   Stream<List<Todo>> watchTodos();
+
+  /// Returns all todos once.
   Future<List<Todo>> getTodos();
 
   /// Paged reads; a real backend would apply [filter]/[sort] server-side and return a slice.
@@ -13,14 +17,22 @@ abstract class FirebaseService {
     required TodoFilter filter,
     required TodoSort sort,
   });
+  /// Creates a todo with [title].
   Future<Todo> addTodo(String title);
+
+  /// Persists [todo] updates.
   Future<Todo> updateTodo(Todo todo);
+
+  /// Removes the todo with [id].
   Future<void> deleteTodo(String id);
 }
 
+/// Persists the full todo list after mutations (e.g. SharedPreferences).
 typedef TodoPersistCallback = Future<void> Function(List<Todo> todos);
 
+/// In-memory [FirebaseService] with optional delays and persistence hook.
 class FakeFirebaseService implements FirebaseService {
+  /// Creates a fake service; optional [seedTodos] and [onPersist] for tests/app bootstrap.
   FakeFirebaseService({
     this.actionDelay = const Duration(milliseconds: 200),
     this.fetchDelay = const Duration(milliseconds: 300),
@@ -37,8 +49,13 @@ class FakeFirebaseService implements FirebaseService {
     );
   }
 
+  /// Artificial delay for mutations (add/update/delete).
   final Duration actionDelay;
+
+  /// Artificial delay for reads.
   final Duration fetchDelay;
+  
+  /// Called after each successful mutation with the full list.
   final TodoPersistCallback? onPersist;
 
   final List<Todo> _todos = <Todo>[];
@@ -147,6 +164,7 @@ class FakeFirebaseService implements FirebaseService {
     await _persist();
   }
 
+  /// Closes the broadcast stream; call when the service is no longer used.
   void dispose() {
     _controller.close();
   }

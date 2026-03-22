@@ -14,6 +14,7 @@ class ConfigViewModel extends _$ConfigViewModel {
     return ConfigState(themeMode: mode);
   }
 
+  /// Switches between light and dark based on current mode and [platformBrightness].
   Future<void> toggleTheme(Brightness platformBrightness) {
     return ref.read(appThemeModeProvider.notifier).toggle(platformBrightness);
   }

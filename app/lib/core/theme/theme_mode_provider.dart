@@ -6,6 +6,7 @@ part 'theme_mode_provider.g.dart';
 
 const String _prefsKeyThemeMode = 'theme_mode';
 
+/// Persists and exposes the app [ThemeMode] via SharedPreferences.
 @Riverpod(keepAlive: true)
 class AppThemeMode extends _$AppThemeMode {
   @override
@@ -26,6 +27,7 @@ class AppThemeMode extends _$AppThemeMode {
     }
   }
 
+  /// Sets [mode] and persists it for the next launch.
   Future<void> setMode(ThemeMode mode) async {
     state = mode;
     final SharedPreferences prefs = await SharedPreferences.getInstance();

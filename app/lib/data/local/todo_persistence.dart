@@ -10,6 +10,7 @@ const String _prefsKeyTodosJson = 'todos_json_v1';
 class TodoPersistence {
   TodoPersistence._();
 
+  /// Returns persisted todos, or null if missing or invalid JSON.
   static List<Todo>? load(SharedPreferences prefs) {
     final String? raw = prefs.getString(_prefsKeyTodosJson);
     if (raw == null || raw.isEmpty) {
@@ -25,11 +26,13 @@ class TodoPersistence {
     }
   }
 
+  /// Writes [todos] to [prefs] as JSON.
   static Future<void> save(SharedPreferences prefs, List<Todo> todos) async {
     final String raw = jsonEncode(todos.map((Todo t) => t.toJson()).toList());
     await prefs.setString(_prefsKeyTodosJson, raw);
   }
 
+  /// Loads saved filter/sort for the todo list UI.
   static TodoInitialUi loadInitialUi(SharedPreferences prefs) {
     final String? f = prefs.getString('todo_filter');
     final String? s = prefs.getString('todo_sort');

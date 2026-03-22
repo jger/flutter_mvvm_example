@@ -1,7 +1,9 @@
 import 'package:app/core/ui/ui_constants.dart';
 import 'package:flutter/material.dart';
 
+/// Application light/dark [ThemeData] factories.
 abstract final class AppTheme {
+  /// Light theme using [UiConstants.seedColor] as seed.
   static ThemeData light() {
     return ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: UiConstants.seedColor),
@@ -9,6 +11,7 @@ abstract final class AppTheme {
     );
   }
 
+  /// Dark theme using [UiConstants.seedColor] as seed.
   static ThemeData dark() {
     return ThemeData(
       colorScheme: ColorScheme.fromSeed(

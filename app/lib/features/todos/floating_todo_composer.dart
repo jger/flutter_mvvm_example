@@ -65,6 +65,7 @@ class _TodoSubmitFab extends StatelessWidget {
 
 /// M3 Expressive: unified card with header, field, and actions.
 class ExpressiveTaskPanel extends StatelessWidget {
+  /// Creates the expanded task entry panel.
   const ExpressiveTaskPanel({
     required this.width,
     required this.hintText,
@@ -76,11 +77,22 @@ class ExpressiveTaskPanel extends StatelessWidget {
     super.key,
   });
 
+  /// Panel width (matches list max width).
   final double width;
+
+  /// Hint shown in the text field.
   final String hintText;
+
+  /// Bound text controller.
   final TextEditingController controller;
+
+  /// Focus for the text field.
   final FocusNode focusNode;
+
+  /// Called when the user submits (send or IME action).
   final VoidCallback onSubmitted;
+  
+  /// Called when the user closes the panel.
   final VoidCallback onClose;
 
   /// Fades in header + field during open morph (0 = hidden).
@@ -228,13 +240,16 @@ class ExpressiveTaskPanel extends StatelessWidget {
 
 /// Compact add button opens the unified expressive panel.
 class FloatingTodoComposer extends StatefulWidget {
+  /// Creates the morphing FAB + panel composer.
   const FloatingTodoComposer({
     required this.hintText,
     required this.onSubmitted,
     super.key,
   });
 
+  /// Hint for the text field.
   final String hintText;
+  /// Called with trimmed non-empty text on submit.
   final void Function(String) onSubmitted;
 
   @override
