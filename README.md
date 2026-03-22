@@ -65,19 +65,26 @@ fvm flutter analyze
 - **Widget tests**: `MaterialApp(home: TodosPage)` and interaction tests.
 - **Golden tests** (opt-in tag `golden`): baseline PNGs under `test/goldens/`. Fonts load via `test/flutter_test_config.dart` and `golden_toolkit` so text does not render as tofu.
 
-**Run goldens** (compare to committed images):
+**Run goldens locally** (compare to committed images):
 
 ```bash
-fvm flutter test --tags golden
+cd app && fvm flutter test --tags golden
 ```
 
-**Update baselines** after intentional UI changes:
+**Update baselines on Linux (matches CI)** — golden PNGs are platform-sensitive (macOS ≠ Ubuntu). Use Docker to generate them on the same OS as CI:
 
 ```bash
-fvm flutter test --tags golden --update-goldens
+# Regenerate PNGs on Linux → writes into app/test/goldens/
+# (builds docker image locally on first run if missing)
+make goldens-update
+
+# Commit the updated baselines
+git add app/test/goldens/ && git commit -m "chore: update goldens for Linux CI [skip ci]"
 ```
 
-**CI**: `.github/workflows/flutter.yml` reads Flutter **3.41.5** from FVM (`jq` on `app/.fvm/fvm_config.json` → `subosito/flutter-action`), runs `flutter test` with **`--exclude-tags golden`** (coverage + analyze + translation check). **`.github/workflows/golden.yml`** + **`.github/actions/flutter-golden-tests`**: `flutter test --tags golden` on `ubuntu-latest`. Regenerate goldens on Linux if CI diffs from your machine. Translation keys: `fvm dart run tool/check_translation_keys.dart` (de/el must match `en.json`). **`FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`** for JS-based actions (see GitHub changelog on Node 20 deprecation).
+`make goldens-test` runs the comparison inside the container without updating files (mirrors the CI check). After changing `docker/goldens/Dockerfile` or the FVM Flutter version, run `make goldens-build` to rebuild the image.
+
+**CI**: `.github/workflows/flutter.yml` reads Flutter **3.41.5** from FVM (`jq` on `app/.fvm/fvm_config.json` → `subosito/flutter-action`), runs `flutter test` with **`--exclude-tags golden`** (coverage + analyze + translation check). **`.github/workflows/golden.yml`** + **`.github/actions/flutter-golden-tests`**: `flutter test --tags golden` on `ubuntu-latest`. Translation keys: `fvm dart run tool/check_translation_keys.dart` (de/el must match `en.json`). **`FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`** for JS-based actions (see GitHub changelog on Node 20 deprecation).
 
 ## Accessibility
 

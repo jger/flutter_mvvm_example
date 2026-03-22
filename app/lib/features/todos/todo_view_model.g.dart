@@ -44,7 +44,7 @@ final class TodosViewModelProvider
   }
 }
 
-String _$todosViewModelHash() => r'8397d384b3205b42e2a214db4cc2488f9717027a';
+String _$todosViewModelHash() => r'763297aefbdf8305484b76f8043447974e942e5c';
 
 /// ViewModel manages state and business logic (MVVM + Riverpod 3).
 
