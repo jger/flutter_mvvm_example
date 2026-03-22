@@ -131,7 +131,9 @@ void main() {
     addTearDown(container.dispose);
     addTearDown(service.dispose);
     await Future<void>.delayed(Duration.zero);
-    container.read(todosViewModelProvider.notifier).setFilter(TodoFilter.active);
+    container
+        .read(todosViewModelProvider.notifier)
+        .setFilter(TodoFilter.active);
     await Future<void>.delayed(Duration.zero);
     expect(container.read(todosViewModelProvider).filter, TodoFilter.active);
   });
