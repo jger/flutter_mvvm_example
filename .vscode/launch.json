@@ -25,6 +25,14 @@
             "type": "dart",
             "deviceId": "emulator-5554"
         },
+        // iOS
+        {
+            "name": "app (iOS)",
+            "cwd": "app",
+            "request": "launch",
+            "type": "dart",
+            "deviceId": "6FAA53B9-A480-4733-9A3C-4888EA803736"
+        },
         {
             "name": "app (profile mode)",
             "cwd": "app",
