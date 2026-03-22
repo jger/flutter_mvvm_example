@@ -37,9 +37,10 @@ class AppThemeMode extends _$AppThemeMode {
     final ThemeMode next = switch (state) {
       ThemeMode.light => ThemeMode.dark,
       ThemeMode.dark => ThemeMode.light,
-      ThemeMode.system => platformBrightness == Brightness.dark
-          ? ThemeMode.light
-          : ThemeMode.dark,
+      ThemeMode.system =>
+        platformBrightness == Brightness.dark
+            ? ThemeMode.light
+            : ThemeMode.dark,
     };
     await setMode(next);
   }

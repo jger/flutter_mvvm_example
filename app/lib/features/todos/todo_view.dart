@@ -47,7 +47,8 @@ class _TodosPageState extends ConsumerState<TodosPage> {
       }
     });
 
-    final double bottomFabInset = MediaQuery.paddingOf(context).bottom +
+    final double bottomFabInset =
+        MediaQuery.paddingOf(context).bottom +
         kComposerBottomReserve +
         32 +
         2 * kComposerGlowMargin;
@@ -70,8 +71,9 @@ class _TodosPageState extends ConsumerState<TodosPage> {
           Positioned.fill(
             child: Center(
               child: ConstrainedBox(
-                constraints:
-                    const BoxConstraints(maxWidth: UiConstants.maxContentWidth),
+                constraints: const BoxConstraints(
+                  maxWidth: UiConstants.maxContentWidth,
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(UiConstants.spacingMd),
                   child: Column(
@@ -89,14 +91,19 @@ class _TodosPageState extends ConsumerState<TodosPage> {
                           label: 'errorBannerLabel'.tr(),
                           liveRegion: true,
                           child: Container(
-                            padding: const EdgeInsets.all(UiConstants.spacingSm),
+                            padding: const EdgeInsets.all(
+                              UiConstants.spacingSm,
+                            ),
                             margin: const EdgeInsets.only(
                               bottom: UiConstants.spacingMd,
                             ),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.errorContainer,
-                              borderRadius:
-                                  BorderRadius.circular(UiConstants.radiusSm),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.errorContainer,
+                              borderRadius: BorderRadius.circular(
+                                UiConstants.radiusSm,
+                              ),
                             ),
                             child: Row(
                               children: <Widget>[
@@ -135,7 +142,10 @@ class _TodosPageState extends ConsumerState<TodosPage> {
                                       ),
                                       children: <Widget>[
                                         SizedBox(
-                                          height: MediaQuery.sizeOf(context).height *
+                                          height:
+                                              MediaQuery.sizeOf(
+                                                context,
+                                              ).height *
                                               0.35,
                                           child: const Center(
                                             child: CircularProgressIndicator(),
@@ -184,21 +194,21 @@ class _TodosPageState extends ConsumerState<TodosPage> {
                                       itemCount: state.visibleTodos.length,
                                       itemBuilder:
                                           (BuildContext context, int index) {
-                                        final Todo todo =
-                                            state.visibleTodos[index];
-                                        return _TodoItem(
-                                          todo: todo,
-                                          onToggle: () =>
-                                              viewModel.toggleTodo(todo),
-                                          onDelete: () =>
-                                              viewModel.deleteTodo(todo.id),
-                                          onEditTitle: (String newTitle) =>
-                                              viewModel.updateTodoTitle(
-                                          todo.id,
-                                          newTitle,
-                                        ),
-                                        );
-                                      },
+                                            final Todo todo =
+                                                state.visibleTodos[index];
+                                            return _TodoItem(
+                                              todo: todo,
+                                              onToggle: () =>
+                                                  viewModel.toggleTodo(todo),
+                                              onDelete: () =>
+                                                  viewModel.deleteTodo(todo.id),
+                                              onEditTitle: (String newTitle) =>
+                                                  viewModel.updateTodoTitle(
+                                                    todo.id,
+                                                    newTitle,
+                                                  ),
+                                            );
+                                          },
                                     ),
                             ),
                             if (state.isRefreshing)
@@ -225,7 +235,8 @@ class _TodosPageState extends ConsumerState<TodosPage> {
           Positioned(
             left: UiConstants.spacingXs,
             right: UiConstants.spacingXs,
-            bottom: MediaQuery.paddingOf(context).bottom +
+            bottom:
+                MediaQuery.paddingOf(context).bottom +
                 UiConstants.spacingMd +
                 kComposerGlowMargin,
             child: Padding(

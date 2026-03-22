@@ -26,9 +26,7 @@ void main() {
         path: 'assets/translations',
         fallbackLocale: const Locale('en'),
         startLocale: const Locale('en'),
-        child: const ProviderScope(
-          child: MaterialApp(home: ConfigPage()),
-        ),
+        child: const ProviderScope(child: MaterialApp(home: ConfigPage())),
       ),
     );
     await tester.pump(const Duration(seconds: 1));

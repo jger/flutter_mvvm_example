@@ -25,11 +25,7 @@ class _FailingAddFirebaseService extends FakeFirebaseService {
 
 Widget _pumpApp({required FakeFirebaseService service}) {
   return EasyLocalization(
-    supportedLocales: const <Locale>[
-      Locale('en'),
-      Locale('de'),
-      Locale('el'),
-    ],
+    supportedLocales: const <Locale>[Locale('en'), Locale('de'), Locale('el')],
     path: 'assets/translations',
     fallbackLocale: const Locale('en'),
     startLocale: const Locale('en'),
@@ -60,7 +56,10 @@ void main() {
       fetchDelay: Duration.zero,
     );
     await tester.pumpWidget(_pumpApp(service: service));
-    await pumpUntilFound(tester, find.byKey(const ValueKey<String>('todo_checkbox_1')));
+    await pumpUntilFound(
+      tester,
+      find.byKey(const ValueKey<String>('todo_checkbox_1')),
+    );
     final Finder cb = find.byKey(const ValueKey<String>('todo_checkbox_1'));
     expect(tester.widget<Checkbox>(cb).value, isFalse);
     await tester.tap(cb);

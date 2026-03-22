@@ -26,9 +26,7 @@ class TodoPersistence {
   }
 
   static Future<void> save(SharedPreferences prefs, List<Todo> todos) async {
-    final String raw = jsonEncode(
-      todos.map((Todo t) => t.toJson()).toList(),
-    );
+    final String raw = jsonEncode(todos.map((Todo t) => t.toJson()).toList());
     await prefs.setString(_prefsKeyTodosJson, raw);
   }
 
@@ -37,7 +35,8 @@ class TodoPersistence {
     final String? s = prefs.getString('todo_sort');
     final TodoFilter filter =
         _enumByName(TodoFilter.values, f) ?? TodoFilter.all;
-    final TodoSort sort = _enumByName(TodoSort.values, s) ?? TodoSort.createdDesc;
+    final TodoSort sort =
+        _enumByName(TodoSort.values, s) ?? TodoSort.createdDesc;
     return TodoInitialUi(filter: filter, sort: sort);
   }
 

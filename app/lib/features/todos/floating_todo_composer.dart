@@ -134,9 +134,7 @@ class ExpressiveTaskPanel extends StatelessWidget {
                               'expressiveTaskPanelTitle'.tr(),
                               style: textTheme.titleSmall?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: scheme.onPrimary.withValues(
-                                  alpha: 0.92,
-                                ),
+                                color: scheme.onPrimary.withValues(alpha: 0.92),
                                 letterSpacing: -0.2,
                               ),
                             ),
@@ -176,18 +174,15 @@ class ExpressiveTaskPanel extends StatelessWidget {
                           child: Material(
                             color: fieldTheme.colorScheme.surface,
                             elevation: 1,
-                            shadowColor: scheme.shadow.withValues(
-                              alpha: 0.12,
-                            ),
+                            shadowColor: scheme.shadow.withValues(alpha: 0.12),
                             surfaceTintColor: scheme.surfaceTint.withValues(
                               alpha: 0,
                             ),
-                            borderRadius: BorderRadius.circular(kComposerCornerRadius),
+                            borderRadius: BorderRadius.circular(
+                              kComposerCornerRadius,
+                            ),
                             child: Padding(
-                              padding: const EdgeInsets.only(
-                                left: 4,
-                                right: 4,
-                              ),
+                              padding: const EdgeInsets.only(left: 4, right: 4),
                               child: Row(
                                 children: <Widget>[
                                   Expanded(
@@ -359,8 +354,7 @@ class _FloatingTodoComposerState extends State<FloatingTodoComposer>
           UiConstants.maxContentWidth,
         );
         final double keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
-        final bool showKeyboardAccessory =
-            _focus.hasFocus && keyboardInset > 0;
+        final bool showKeyboardAccessory = _focus.hasFocus && keyboardInset > 0;
 
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -379,10 +373,8 @@ class _FloatingTodoComposerState extends State<FloatingTodoComposer>
                 final double contentReveal = Curves.easeOut.transform(
                   ((t - 0.12) / 0.88).clamp(0.0, 1.0),
                 );
-                final double fabOpacity = (1 - Curves.easeIn.transform(t)).clamp(
-                  0.0,
-                  1.0,
-                );
+                final double fabOpacity = (1 - Curves.easeIn.transform(t))
+                    .clamp(0.0, 1.0);
 
                 return SizedBox(
                   width: maxW,

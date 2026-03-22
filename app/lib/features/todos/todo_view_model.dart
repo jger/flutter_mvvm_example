@@ -77,11 +77,7 @@ class TodosViewModel extends _$TodosViewModel {
       if (!ref.mounted) {
         return;
       }
-      state = state.copyWith(
-        todos: todos,
-        isRefreshing: false,
-        error: null,
-      );
+      state = state.copyWith(todos: todos, isRefreshing: false, error: null);
     } on TodoFailure catch (e) {
       if (!ref.mounted) {
         return;
@@ -166,10 +162,7 @@ class TodosViewModel extends _$TodosViewModel {
       if (!ref.mounted) {
         return;
       }
-      state = state.copyWith(
-        error: e.message,
-        pendingRetry: TodoDeleteOp(id),
-      );
+      state = state.copyWith(error: e.message, pendingRetry: TodoDeleteOp(id));
     } catch (e, st) {
       _logger.log('deleteTodo failed', error: e, stackTrace: st);
       if (!ref.mounted) {

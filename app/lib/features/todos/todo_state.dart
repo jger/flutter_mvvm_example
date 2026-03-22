@@ -97,9 +97,7 @@ class TodosState extends Equatable {
       todos: todos ?? this.todos,
       isLoading: isLoading ?? this.isLoading,
       isRefreshing: isRefreshing ?? this.isRefreshing,
-      error: identical(error, _unsetError)
-          ? this.error
-          : error as String?,
+      error: identical(error, _unsetError) ? this.error : error as String?,
       filter: filter ?? this.filter,
       sort: sort ?? this.sort,
       pendingRetry: identical(pendingRetry, _unsetError)

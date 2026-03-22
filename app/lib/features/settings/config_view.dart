@@ -11,7 +11,9 @@ class ConfigPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ConfigState state = ref.watch(configViewModelProvider);
-    final ConfigViewModel viewModel = ref.read(configViewModelProvider.notifier);
+    final ConfigViewModel viewModel = ref.read(
+      configViewModelProvider.notifier,
+    );
     final Brightness platform = MediaQuery.platformBrightnessOf(context);
     final Brightness effective = state.effectiveBrightness(platform);
 
