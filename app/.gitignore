@@ -43,3 +43,7 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# FVM — commit fvm_config.json; ignore local SDK symlinks
+.fvm/flutter_sdk
+.fvm/versions

@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+name: Flutter golden tests
+description: Install Flutter (FVM version via subosito/flutter-action), pub get, build_runner, flutter test --tags golden.
+inputs:
+  working-directory:
+    description: Directory containing pubspec.yaml
+    required: true
+    default: app
+runs:
+  using: composite
+  steps:
+    - name: Flutter version (FVM)
+      id: fvm_version
+      run: echo "flutter=$(jq -r '.flutterSdkVersion' .fvm/fvm_config.json)" >> "$GITHUB_OUTPUT"
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+    - uses: subosito/flutter-action@v2
+      with:
+        flutter-version: ${{ steps.fvm_version.outputs.flutter }}
+        cache: true
+    - name: pub get
+      run: flutter pub get
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+    - name: build_runner
+      run: dart run build_runner build --delete-conflicting-outputs
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+    - name: golden tests
+      run: flutter test --tags golden
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}

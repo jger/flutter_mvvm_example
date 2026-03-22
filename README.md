@@ -40,20 +40,25 @@ So: **typed domain errors at the repository boundary**, **user-visible text from
 
 ## Getting started
 
+Flutter version is pinned with **[FVM](https://fvm.app/)** (`app/.fvm/fvm_config.json`, **3.41.5**). Install FVM, then:
+
 ```bash
 cd app
-flutter pub get
-dart run build_runner build --delete-conflicting-outputs
-flutter run -d chrome
+fvm install
+fvm flutter pub get
+fvm dart run build_runner build --delete-conflicting-outputs
+fvm flutter run -d chrome
 ```
+
+Without FVM, install Flutter **3.41.5** (stable) and use `flutter` / `dart` instead of `fvm flutter` / `fvm dart`.
 
 After changing `@riverpod` providers, regenerate code (same `build_runner` command).
 
 ## Tests & quality
 
 ```bash
-flutter test --coverage
-flutter analyze
+fvm flutter test --coverage
+fvm flutter analyze
 ```
 
 - **Unit / VM tests**: view models with `ProviderScope` overrides (e.g. fake service with zero delay).
@@ -63,16 +68,16 @@ flutter analyze
 **Run goldens** (compare to committed images):
 
 ```bash
-flutter test --tags golden
+fvm flutter test --tags golden
 ```
 
 **Update baselines** after intentional UI changes:
 
 ```bash
-flutter test --tags golden --update-goldens
+fvm flutter test --tags golden --update-goldens
 ```
 
-**CI** (`.github/workflows/flutter.yml`): runs `flutter test` with **`--exclude-tags golden`** so goldens stay optional on every push; run goldens locally when you change layout. Translation keys are checked with `dart run tool/check_translation_keys.dart` (de/el must match `en.json`). GitHub Actions uses **`FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`** for JS-based actions (see GitHub changelog on Node 20 deprecation).
+**CI**: `.github/workflows/flutter.yml` reads Flutter **3.41.5** from FVM (`jq` on `app/.fvm/fvm_config.json` → `subosito/flutter-action`), runs `flutter test` with **`--exclude-tags golden`** (coverage + analyze + translation check). **`.github/workflows/golden.yml`** + **`.github/actions/flutter-golden-tests`**: `flutter test --tags golden` on `ubuntu-latest`. Regenerate goldens on Linux if CI diffs from your machine. Translation keys: `fvm dart run tool/check_translation_keys.dart` (de/el must match `en.json`). **`FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`** for JS-based actions (see GitHub changelog on Node 20 deprecation).
 
 ## Accessibility
 

@@ -1,0 +1,6 @@
+{
+  "dart.flutterSdkPath": "app/.fvm/flutter_sdk",
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-action.json": [".github/actions/**/action.yml"]
+  }
+}
