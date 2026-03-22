@@ -22,7 +22,10 @@ void main() {
     await EasyLocalization.ensureInitialized();
   });
 
-  testWidgets('TodosPage golden', (WidgetTester tester) async {
+  // Both PNGs in one test: a follow-up testWidgets after matchesGoldenFile can drop the FAB.
+  testWidgets('TodosPage goldens (closed + composer open)', (
+    WidgetTester tester,
+  ) async {
     final FakeFirebaseService service = FakeFirebaseService(
       actionDelay: Duration.zero,
       fetchDelay: Duration.zero,
@@ -39,40 +42,19 @@ void main() {
             todoRepositoryProvider.overrideWithValue(TodoRepository(service)),
             todoInitialUiProvider.overrideWithValue(TodoInitialUi.defaults),
           ],
-          child: const MaterialApp(home: TodosPage()),
+          child: localizedMaterialApp(home: const TodosPage()),
         ),
       ),
     );
-    await tester.pump(const Duration(seconds: 1));
+    await tester.pump();
+    await pumpUntilFakeTodoListRendered(tester);
+    await tester.pump(const Duration(milliseconds: 300));
     await expectLater(
       find.byType(TodosPage),
       matchesGoldenFile('goldens/todos_page.png'),
     );
-    service.dispose();
-  }, tags: <String>['golden']);
 
-  testWidgets('TodosPage golden composer open', (WidgetTester tester) async {
-    final FakeFirebaseService service = FakeFirebaseService(
-      actionDelay: Duration.zero,
-      fetchDelay: Duration.zero,
-    );
-    await tester.pumpWidget(
-      EasyLocalization(
-        supportedLocales: const <Locale>[Locale('en')],
-        path: 'assets/translations',
-        fallbackLocale: const Locale('en'),
-        startLocale: const Locale('en'),
-        child: ProviderScope(
-          overrides: <Override>[
-            firebaseServiceProvider.overrideWithValue(service),
-            todoRepositoryProvider.overrideWithValue(TodoRepository(service)),
-            todoInitialUiProvider.overrideWithValue(TodoInitialUi.defaults),
-          ],
-          child: const MaterialApp(home: TodosPage()),
-        ),
-      ),
-    );
-    await tester.pump(const Duration(seconds: 1));
+    await pumpUntilFound(tester, find.byKey(const Key('todo_fab_expand')));
     await tester.tap(find.byKey(const Key('todo_fab_expand')));
     await pumpUntilFound(tester, find.byKey(const Key('todo_input_field')));
     await tester.pump(const Duration(milliseconds: 500));

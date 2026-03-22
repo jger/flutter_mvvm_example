@@ -5,6 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'test_helpers.dart';
+
 void main() {
   final TestWidgetsFlutterBinding binding =
       TestWidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +28,9 @@ void main() {
         path: 'assets/translations',
         fallbackLocale: const Locale('en'),
         startLocale: const Locale('en'),
-        child: const ProviderScope(child: MaterialApp(home: ConfigPage())),
+        child: ProviderScope(
+          child: localizedMaterialApp(home: const ConfigPage()),
+        ),
       ),
     );
     await tester.pump(const Duration(seconds: 1));
