@@ -1,10 +1,10 @@
-import 'package:flutter_mvvm_example/data/repositories/todo_repository.dart';
-import 'package:flutter_mvvm_example/data/services/fake_firebase_service.dart';
-import 'package:flutter_mvvm_example/domain/models/todo.dart';
-import 'package:flutter_mvvm_example/domain/todo_filters.dart';
-import 'package:flutter_mvvm_example/features/todos/todo_providers.dart';
-import 'package:flutter_mvvm_example/features/todos/todo_state.dart';
-import 'package:flutter_mvvm_example/features/todos/todo_view_model.dart';
+import 'package:flutter_mvvm_example/features/todos/data/services/fake_firebase_service.dart';
+import 'package:flutter_mvvm_example/features/todos/models/todo.dart';
+import 'package:flutter_mvvm_example/features/todos/models/todo_filters.dart';
+import 'package:flutter_mvvm_example/features/todos/repositories/todo_repository.dart';
+import 'package:flutter_mvvm_example/features/todos/viewmodel/todo_providers.dart';
+import 'package:flutter_mvvm_example/features/todos/viewmodel/todo_state.dart';
+import 'package:flutter_mvvm_example/features/todos/viewmodel/todo_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod/misc.dart' show Override;

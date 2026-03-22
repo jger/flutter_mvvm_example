@@ -3,19 +3,19 @@
 <!-- Replace GIST_ID_PLACEHOLDER with your gist ID (same as COVERAGE_GIST_ID), or copy the line from Actions → Flutter CI → Summary. -->
 [![coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fjger%2F04ccfed88313b3d6dabd423fe99f026a%2Fraw%2Fcoverage.json)](https://github.com/jger/flutter_mvvm_example/actions)
 
-Sample app that demonstrates **MVVM with Riverpod**, a **fake backend** (Firebase-shaped API), and a clear split between **data**, **domain**, and **features**. Use it as a reference for layering, typed errors, and testable view models—not as production infrastructure.
+Sample app that demonstrates **MVVM with Riverpod**, a **fake backend** (Firebase-shaped API), and **feature-first** modules (`models`, `data`, `repositories`, `view` / `viewmodel`) plus **core** shared code. Use it as a reference for layering, typed errors, and testable view models—not as production infrastructure.
 
 ## What you get
 
 | Area | Details |
 |------|---------|
 | **State & UI** | `hooks_riverpod` + `flutter_hooks` (`HookConsumerWidget`, `useScrollController`, …), `@riverpod` view models, Material 3, light/dark (system) |
-| **Data** | `FakeFirebaseService` (delays, `getTodosPage` with filter/sort simulated in-memory for the fake only, `watchTodos`) + `TodoRepository` — a real backend would apply filter/sort in queries, not duplicate domain logic client-side for paging |
-| **Persistence** | JSON via `TodoPersistence` / `SharedPreferences`, wired in `main()` with provider overrides |
+| **Data** | [`features/todos/data/services/fake_firebase_service.dart`](app/lib/features/todos/data/services/fake_firebase_service.dart) — delays, `getTodosPage` (filter/sort in-memory for the fake only), `watchTodos`; [`todo_repository.dart`](app/lib/features/todos/repositories/todo_repository.dart) — a real backend would apply filter/sort in queries, not duplicate domain logic client-side for paging |
+| **Persistence** | [`features/todos/data/local/todo_persistence.dart`](app/lib/features/todos/data/local/todo_persistence.dart) + `SharedPreferences`, wired in `main()` with provider overrides |
 | **Navigation** | `go_router`: `/` (todos), `/config` (settings) |
 | **i18n** | easy_localization — EN / DE / EL |
 | **Logging** | `AppLogger` in `core/logging` |
-| **Domain** | `Todo`, `TodoFilter` / `TodoSort`, sealed **`TodoFailure`**; repository maps services to `TodoFailure` for callers |
+| **Models (todos)** | [`features/todos/models/`](app/lib/features/todos/models/) — `Todo`, `TodoFilter` / `TodoSort`, sealed **`TodoFailure`**; repository maps services to `TodoFailure` for callers |
 | **Errors & recovery** | User-visible messages from failures; snackbar + **retry** for failed mutations (`pendingRetry` on `TodosViewModel`) |
 | **a11y** | **`Accessibility Semantics`** region for the scrollable list (localized label); rows expose title and completion; validate with TalkBack / VoiceOver |
 | **Demo config** | **`AppConfig`**: `DEMO_MODE` via `--dart-define` (default `true`); no API keys in source |
@@ -33,10 +33,9 @@ Deployment is handled by GitHub Actions; see **GitHub Actions** and **Makefile**
 
 ## Architecture
 
-- **`domain`**: `Todo`, `TodoFilter` / `TodoSort`, **`TodoFailure`** (sealed domain errors).
-- **`data`**: `FakeFirebaseService` + **`TodoRepository`** — maps the backend to streams/futures and surfaces failures as `TodoFailure`.
-- **`features`**: `todo_state`, `TodosViewModel`, `TodosPage`, providers; settings under `features/settings`.
-- **`core`**: `AppLogger`, `createAppRouter()`.
+- **`features/todos/`** — [`models/`](app/lib/features/todos/models/) (`Todo`, filters, **`TodoFailure`**), [`data/local`](app/lib/features/todos/data/local/) + [`data/services`](app/lib/features/todos/data/services/), [`repositories/`](app/lib/features/todos/repositories/), [`view/`](app/lib/features/todos/view/) (`TodosPage`, …), [`viewmodel/`](app/lib/features/todos/viewmodel/) (`TodosViewModel`, `TodosState`, providers).
+- **`features/settings/`** — [`models/`](app/lib/features/settings/models/), [`view/`](app/lib/features/settings/view/), [`viewmodel/`](app/lib/features/settings/viewmodel/) (theme via `core/theme`; locale via `easy_localization` — no feature-local repository).
+- **`core/`**: `AppLogger`, router, theme, config, …
 
 Flow: **View → ViewModel → Repository → Service**. The UI does not talk to the fake Firebase directly.
 
@@ -44,8 +43,8 @@ Flow: **View → ViewModel → Repository → Service**. The UI does not talk to
 
 Failures are modeled in the domain and handled in one place per operation:
 
-1. **`TodoFailure`** (`todo_failure.dart`) — sealed class with variants such as `TodoFailureUnknown` and `TodoFailureNotFound`, each carrying a **`message`** for the UI.
-2. **`TodoRepository`** wraps service calls: unexpected exceptions are converted to **`TodoFailureUnknown`** (or typed failures where the service throws them), so callers see a single error type from the data layer.
+1. **`TodoFailure`** ([`features/todos/models/todo_failure.dart`](app/lib/features/todos/models/todo_failure.dart)) — sealed class with variants such as `TodoFailureUnknown` and `TodoFailureNotFound`, each carrying a **`message`** for the UI.
+2. **`TodoRepository`** ([`features/todos/repositories/todo_repository.dart`](app/lib/features/todos/repositories/todo_repository.dart)) wraps service calls: unexpected exceptions are converted to **`TodoFailureUnknown`** (or typed failures where the service throws them), so callers see a single error type from the data layer.
 3. **`TodosViewModel`**:
    - **`on TodoFailure`**: sets `state.error` to **`e.message`** and, for mutating actions, stores **`pendingRetry`** (`TodoAddOp`, `TodoToggleOp`, etc.) so the user can retry the same operation.
    - **Other errors**: logs with **`AppLogger`**, exposes **`e.toString()`** (or message) on state, and still sets **`pendingRetry`** where applicable.

@@ -1,7 +1,7 @@
-import 'package:flutter_mvvm_example/data/services/fake_firebase_service.dart';
-import 'package:flutter_mvvm_example/domain/models/todo.dart';
-import 'package:flutter_mvvm_example/domain/todo_failure.dart';
-import 'package:flutter_mvvm_example/domain/todo_filters.dart';
+import 'package:flutter_mvvm_example/features/todos/data/services/fake_firebase_service.dart';
+import 'package:flutter_mvvm_example/features/todos/models/todo.dart';
+import 'package:flutter_mvvm_example/features/todos/models/todo_failure.dart';
+import 'package:flutter_mvvm_example/features/todos/models/todo_filters.dart';
 
 /// Maps domain operations to [FirebaseService] (real or fake) with typed failures.
 class TodoRepository {

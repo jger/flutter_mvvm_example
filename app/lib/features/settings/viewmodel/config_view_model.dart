@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mvvm_example/core/theme/theme_mode_provider.dart';
-import 'package:flutter_mvvm_example/features/settings/config_state.dart';
+import 'package:flutter_mvvm_example/features/settings/models/config_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'config_view_model.g.dart';

@@ -1,5 +1,5 @@
-import 'package:flutter_mvvm_example/domain/models/todo.dart';
-import 'package:flutter_mvvm_example/features/todos/todo_state.dart';
+import 'package:flutter_mvvm_example/features/todos/models/todo.dart';
+import 'package:flutter_mvvm_example/features/todos/viewmodel/todo_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

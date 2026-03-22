@@ -1,10 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mvvm_example/core/router/app_router.dart';
-import 'package:flutter_mvvm_example/data/repositories/todo_repository.dart';
-import 'package:flutter_mvvm_example/data/services/fake_firebase_service.dart';
-import 'package:flutter_mvvm_example/domain/todo_filters.dart';
-import 'package:flutter_mvvm_example/features/todos/todo_providers.dart';
+import 'package:flutter_mvvm_example/features/todos/data/services/fake_firebase_service.dart';
+import 'package:flutter_mvvm_example/features/todos/models/todo_filters.dart';
+import 'package:flutter_mvvm_example/features/todos/repositories/todo_repository.dart';
+import 'package:flutter_mvvm_example/features/todos/viewmodel/todo_providers.dart';
 import 'package:flutter_mvvm_example/main.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';

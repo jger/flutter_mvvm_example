@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter_mvvm_example/domain/models/todo.dart';
-import 'package:flutter_mvvm_example/domain/todo_filters.dart';
+import 'package:flutter_mvvm_example/features/todos/models/todo.dart';
+import 'package:flutter_mvvm_example/features/todos/models/todo_filters.dart';
 
 /// Last failed mutation for snackbar retry.
 sealed class TodoOperation extends Equatable {
