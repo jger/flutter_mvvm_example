@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/jger/flutter_mvvm_example/compare/v1.0.0...v1.1.0) (2026-03-22)
+
+
+### Features
+
+* add coverage reporting to CI workflow using VeryGoodCoverage and upload coverage artifacts ([4fd2c64](https://github.com/jger/flutter_mvvm_example/commit/4fd2c642bace6a27042022d7199311eab882f061))
+
 # 1.0.0 (2026-03-22)
 
 
