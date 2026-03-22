@@ -16,7 +16,7 @@ Sample app that demonstrates **MVVM with Riverpod**, a **fake backend** (Firebas
 | **Errors & recovery** | User-visible messages from failures; snackbar + **retry** for failed mutations (`pendingRetry` on `TodosViewModel`) |
 | **a11y** | **`Accessibility Semantics`** region for the scrollable list (localized label); rows expose title and completion; validate with TalkBack / VoiceOver |
 | **Demo config** | **`AppConfig`**: `DEMO_MODE` via `--dart-define` (default `true`); no API keys in source |
-| **Tests** | Unit/widget (`test/`, incl. **ViewModel error paths** in `todo_view_model_error_test.dart`), **integration** (`integration_test/` — run separately from `test/`; Flutter does not merge in one invocation), **golden** (`golden_toolkit`, tag `golden`); CI enforces **≥75%** line coverage on `test/`; Linux goldens via `make goldens-*` / Docker |
+| **Tests** | Unit/widget (`test/`, incl. **ViewModel error paths** in `todo_view_model_error_test.dart`), **integration** (`integration_test/` — separate from `test/` + coverage), **golden** (`golden_toolkit`, tag `golden`); CI **≥75%** line coverage on `test/`; Linux in Docker: `make goldens-*`, **`make integration-tests`** (`docker/integration-tests/`) |
 
 Todos: filter, sort, edit title (dialog), pull-to-refresh, max content width on web.
 
@@ -26,7 +26,7 @@ Todos: filter, sort, edit title (dialog), pull-to-refresh, max content width on 
 
 **[flutter_mvvm_example — browse API docs](https://jger.github.io/flutter_mvvm_example/index.html)**
 
-Deployment is handled by GitHub Actions; see the **GitHub Actions** section at the end of this README.
+Deployment is handled by GitHub Actions; see **GitHub Actions** and **Makefile** at the end of this README.
 
 ## Architecture
 
@@ -75,7 +75,7 @@ fvm flutter test test --coverage --exclude-tags golden
 
 # Integration tests — separate invocation (required); pick a desktop device, e.g.:
 fvm flutter test integration_test -d macos   # local
-# CI runs: flutter test integration_test -d linux (after enabling Linux desktop + GTK deps)
+# CI runs: `xvfb-run -a flutter test integration_test -d linux` (virtual display; plain `-d linux` on headless Ubuntu often fails to attach)
 
 fvm flutter analyze
 ```
@@ -106,6 +106,16 @@ git add app/test/goldens/ && git commit -m "chore: update goldens for Linux CI [
 
 `make goldens-test` runs the comparison inside the container without updating files (mirrors the CI check). After changing `docker/goldens/Dockerfile` or the FVM Flutter version, run `make goldens-build` to rebuild the image.
 
+**Integration tests on Linux (matches CI)** — GitHub Actions and `docker/integration-tests` use the same **APT set** + **`flutter precache --linux`** + **`xvfb-run -a flutter test integration_test -d linux`**. Locally without a Linux desktop:
+
+```bash
+# First run builds image `flutter-integration-tests:<FVM version>` if missing
+make integration-tests
+
+# Rebuild image after Dockerfile or Flutter version change
+make integration-tests-build
+```
+
 ## Accessibility (a11y)
 
 The todo list uses a **`Semantics`** region with a localized label for the scrollable list. Individual todo rows expose title and completion to assistive tech. Prefer testing with TalkBack / VoiceOver when changing list or dialog behavior.
@@ -123,7 +133,23 @@ Versions and GitHub Releases are driven by **[semantic-release](https://github.c
 | Workflow | Role |
 |----------|------|
 | **`.github/workflows/docs.yml`** | Runs `dart doc` in `app/` when pushes to `main` touch `app/lib/`, or manually via **Actions → API documentation → Run workflow**. Publishes HTML API docs to GitHub Pages (same FVM Flutter as the app). Set **Settings → Pages → Build and deployment → Source** to **GitHub Actions** so deploy works. Live docs: [flutter_mvvm_example API](https://jger.github.io/flutter_mvvm_example/index.html). |
-| **`.github/workflows/flutter.yml`** | Flutter version from FVM (`jq` on `app/.fvm/fvm_config.json` → `subosito/flutter-action`). Installs Linux desktop deps, `flutter test test --coverage --exclude-tags golden`, **`very_good_coverage` min 75%**, then **`flutter test integration_test -d linux`**. Also `flutter analyze`, `tool/check_translation_keys.dart` (de/el must match `en.json`). |
+| **`.github/workflows/flutter.yml`** | FVM Flutter (`subosito/flutter-action`). **APT:** build-essential, clang, cmake, ninja, pkg-config, GTK, **libblkid**, liblzma, **libglu1-mesa**, **xvfb** (aligned with `docker/integration-tests/Dockerfile`). **`flutter precache --linux`** then `flutter test test --coverage --exclude-tags golden`, **`very_good_coverage` ≥75%**, **`xvfb-run -a flutter test integration_test -d linux`**. Also `flutter analyze`, `dart format`, `build_runner`, `tool/check_translation_keys.dart`. |
 | **`.github/workflows/golden.yml`** + **`.github/actions/flutter-golden-tests`** | `flutter test --tags golden` on `ubuntu-latest`. |
 
 **`FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`** is set for JS-based actions (see GitHub’s Node 20 deprecation notes).
+
+## Makefile (`make` at repo root)
+
+Requires **Docker**. Flutter version comes from **`app/.fvm/fvm_config.json`**; images are tagged with that version (e.g. `flutter-goldens:3.41.5`).
+
+| Target | Purpose |
+|--------|---------|
+| **`make goldens-build`** | Build `docker/goldens` image `flutter-goldens:<version>`. |
+| **`make goldens-ensure-image`** | Build image only if missing. |
+| **`make goldens-update`** | In container: `pub get`, `build_runner`, **`flutter test --update-goldens --tags golden`** → writes **`app/test/goldens/`**. |
+| **`make goldens-test`** | In container: same prep, then **`flutter test --tags golden`** (compare only). |
+| **`make integration-tests-build`** | Build `docker/integration-tests` image `flutter-integration-tests:<version>`. |
+| **`make integration-tests-ensure-image`** | Build integration image only if missing. |
+| **`make integration-tests`** | In container: `pub get`, `build_runner`, **`xvfb-run -a flutter test integration_test -d linux`**. |
+
+After changing **`docker/goldens/Dockerfile`**, **`docker/integration-tests/Dockerfile`**, or the FVM Flutter version, run the corresponding **`*-build`** target so the image is rebuilt.
