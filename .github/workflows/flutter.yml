@@ -5,6 +5,9 @@ on:
     branches: [main, master]
   pull_request:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   analyze-test:
     runs-on: ubuntu-latest
@@ -21,4 +24,5 @@ jobs:
       - run: dart run build_runner build --delete-conflicting-outputs
       - run: dart format --set-exit-if-changed .
       - run: flutter analyze
+      - run: dart run tool/check_translation_keys.dart
       - run: flutter test --coverage --exclude-tags golden

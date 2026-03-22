@@ -45,6 +45,7 @@ final class TodoEditTitleOp extends TodoOperation {
 
 class TodosState extends Equatable {
   const TodosState({
+    required this.allTodos,
     required this.todos,
     this.isLoading = false,
     this.isRefreshing = false,
@@ -52,7 +53,15 @@ class TodosState extends Equatable {
     this.filter = TodoFilter.all,
     this.sort = TodoSort.createdDesc,
     this.pendingRetry,
+    this.hasMore = false,
+    this.isLoadingMore = false,
+    this.pageSize = 20,
   });
+
+  /// Full list from the backend stream (authoritative for lookups).
+  final List<Todo> allTodos;
+
+  /// Loaded slice(s) from the repository paged query for the current filter/sort.
   final List<Todo> todos;
   final bool isLoading;
   final bool isRefreshing;
@@ -60,31 +69,17 @@ class TodosState extends Equatable {
   final TodoFilter filter;
   final TodoSort sort;
   final TodoOperation? pendingRetry;
+  final bool hasMore;
+  final bool isLoadingMore;
+  final int pageSize;
 
   static const Object _unsetError = Object();
 
-  List<Todo> get visibleTodos {
-    Iterable<Todo> items = todos;
-    if (filter == TodoFilter.active) {
-      items = items.where((Todo e) => !e.isCompleted);
-    } else if (filter == TodoFilter.completed) {
-      items = items.where((Todo e) => e.isCompleted);
-    }
-    final List<Todo> list = List<Todo>.of(items);
-    if (sort == TodoSort.createdDesc) {
-      list.sort((Todo a, Todo b) => b.createdAt.compareTo(a.createdAt));
-    } else if (sort == TodoSort.createdAsc) {
-      list.sort((Todo a, Todo b) => a.createdAt.compareTo(b.createdAt));
-    } else if (sort == TodoSort.titleAsc) {
-      list.sort(
-        (Todo a, Todo b) =>
-            a.title.toLowerCase().compareTo(b.title.toLowerCase()),
-      );
-    }
-    return list;
-  }
+  /// Paged rows for the list (already filtered/sorted by the repository).
+  List<Todo> get visibleTodos => todos;
 
   TodosState copyWith({
+    List<Todo>? allTodos,
     List<Todo>? todos,
     bool? isLoading,
     bool? isRefreshing,
@@ -92,8 +87,12 @@ class TodosState extends Equatable {
     TodoFilter? filter,
     TodoSort? sort,
     Object? pendingRetry = _unsetError,
+    bool? hasMore,
+    bool? isLoadingMore,
+    int? pageSize,
   }) {
     return TodosState(
+      allTodos: allTodos ?? this.allTodos,
       todos: todos ?? this.todos,
       isLoading: isLoading ?? this.isLoading,
       isRefreshing: isRefreshing ?? this.isRefreshing,
@@ -103,11 +102,15 @@ class TodosState extends Equatable {
       pendingRetry: identical(pendingRetry, _unsetError)
           ? this.pendingRetry
           : pendingRetry as TodoOperation?,
+      hasMore: hasMore ?? this.hasMore,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      pageSize: pageSize ?? this.pageSize,
     );
   }
 
   @override
   List<Object?> get props => <Object?>[
+    allTodos,
     todos,
     isLoading,
     isRefreshing,
@@ -115,5 +118,8 @@ class TodosState extends Equatable {
     filter,
     sort,
     pendingRetry,
+    hasMore,
+    isLoadingMore,
+    pageSize,
   ];
 }

@@ -27,11 +27,16 @@ class TodosViewModel extends _$TodosViewModel {
     _logger = ref.watch(appLoggerProvider);
     _sub?.cancel();
     _sub = _repo.watchTodos().listen(
-      (List<Todo> todos) {
+      (List<Todo> allTodos) {
         if (!ref.mounted) {
           return;
         }
-        state = state.copyWith(todos: todos, isLoading: false, error: null);
+        state = state.copyWith(
+          allTodos: allTodos,
+          isLoading: false,
+          error: null,
+        );
+        unawaited(_reloadFirstPage());
       },
       onError: (Object e, StackTrace st) {
         _logger.log('watchTodos error', error: e, stackTrace: st);
@@ -47,6 +52,7 @@ class TodosViewModel extends _$TodosViewModel {
       previous?.cancel();
     });
     return TodosState(
+      allTodos: const <Todo>[],
       todos: const <Todo>[],
       isLoading: true,
       filter: initial.filter,
@@ -54,14 +60,83 @@ class TodosViewModel extends _$TodosViewModel {
     );
   }
 
+  Future<void> _reloadFirstPage() async {
+    if (!ref.mounted) {
+      return;
+    }
+    try {
+      final List<Todo> first = await _repo.getTodosPage(
+        offset: 0,
+        limit: state.pageSize,
+        filter: state.filter,
+        sort: state.sort,
+      );
+      if (!ref.mounted) {
+        return;
+      }
+      state = state.copyWith(
+        todos: first,
+        hasMore: first.length >= state.pageSize,
+        isLoadingMore: false,
+      );
+    } on TodoFailure catch (e) {
+      if (!ref.mounted) {
+        return;
+      }
+      state = state.copyWith(isLoadingMore: false, error: e.message);
+    } catch (e, st) {
+      _logger.log('reloadFirstPage failed', error: e, stackTrace: st);
+      if (!ref.mounted) {
+        return;
+      }
+      state = state.copyWith(isLoadingMore: false, error: e.toString());
+    }
+  }
+
+  Future<void> loadMore() async {
+    if (!state.hasMore || state.isLoadingMore) {
+      return;
+    }
+    state = state.copyWith(isLoadingMore: true);
+    try {
+      final List<Todo> next = await _repo.getTodosPage(
+        offset: state.todos.length,
+        limit: state.pageSize,
+        filter: state.filter,
+        sort: state.sort,
+      );
+      if (!ref.mounted) {
+        return;
+      }
+      state = state.copyWith(
+        todos: <Todo>[...state.todos, ...next],
+        hasMore: next.length >= state.pageSize,
+        isLoadingMore: false,
+      );
+    } on TodoFailure catch (e) {
+      if (!ref.mounted) {
+        return;
+      }
+      state = state.copyWith(isLoadingMore: false, error: e.message);
+    } catch (e, st) {
+      _logger.log('loadMore failed', error: e, stackTrace: st);
+      if (!ref.mounted) {
+        return;
+      }
+      state = state.copyWith(isLoadingMore: false, error: e.toString());
+    }
+  }
+
   void setFilter(TodoFilter filter) {
     state = state.copyWith(filter: filter);
     unawaited(_saveDisplayPrefs());
+    unawaited(_reloadFirstPage());
   }
 
   void setSort(TodoSort sort) {
     state = state.copyWith(sort: sort);
     unawaited(_saveDisplayPrefs());
+    unawaited(_reloadFirstPage());
   }
 
   Future<void> _saveDisplayPrefs() async {
@@ -73,11 +148,16 @@ class TodosViewModel extends _$TodosViewModel {
   Future<void> refresh() async {
     state = state.copyWith(isRefreshing: true);
     try {
-      final List<Todo> todos = await _repo.getTodos();
+      final List<Todo> full = await _repo.getTodos();
       if (!ref.mounted) {
         return;
       }
-      state = state.copyWith(todos: todos, isRefreshing: false, error: null);
+      state = state.copyWith(allTodos: full, error: null);
+      await _reloadFirstPage();
+      if (!ref.mounted) {
+        return;
+      }
+      state = state.copyWith(isRefreshing: false);
     } on TodoFailure catch (e) {
       if (!ref.mounted) {
         return;
@@ -181,7 +261,7 @@ class TodosViewModel extends _$TodosViewModel {
       return;
     }
     Todo? current;
-    for (final Todo t in state.todos) {
+    for (final Todo t in state.allTodos) {
       if (t.id == id) {
         current = t;
         break;

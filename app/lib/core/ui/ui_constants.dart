@@ -12,5 +12,8 @@ abstract final class UiConstants {
 
   static const double maxContentWidth = 600;
 
+  /// Scroll-to-end padding (px) before requesting the next todos page.
+  static const double todoListLoadMoreThreshold = 120;
+
   static const Color seedColor = Colors.indigoAccent;
 }

@@ -6,21 +6,41 @@ import 'package:app/features/todos/todo_state.dart';
 import 'package:app/features/todos/todo_view_model.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class TodosPage extends ConsumerStatefulWidget {
+class TodosPage extends HookConsumerWidget {
   const TodosPage({super.key});
 
   @override
-  ConsumerState<TodosPage> createState() => _TodosPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final lastSnackError = useState<String?>(null);
+    final ScrollController scrollController = useScrollController();
 
-class _TodosPageState extends ConsumerState<TodosPage> {
-  String? _lastSnackError;
+    useEffect(() {
+      void onScroll() {
+        if (!scrollController.hasClients) {
+          return;
+        }
+        final TodosState state = ref.read(todosViewModelProvider);
+        if (state.isLoadingMore || !state.hasMore) {
+          return;
+        }
+        final double max = scrollController.position.maxScrollExtent;
+        if (max <= 0) {
+          return;
+        }
+        if (scrollController.position.pixels >=
+            max - UiConstants.todoListLoadMoreThreshold) {
+          ref.read(todosViewModelProvider.notifier).loadMore();
+        }
+      }
 
-  @override
-  Widget build(BuildContext context) {
+      scrollController.addListener(onScroll);
+      return () => scrollController.removeListener(onScroll);
+    }, <Object?>[scrollController]);
+
     final TodosState state = ref.watch(todosViewModelProvider);
     final TodosViewModel viewModel = ref.read(todosViewModelProvider.notifier);
 
@@ -30,8 +50,8 @@ class _TodosPageState extends ConsumerState<TodosPage> {
     ) {
       if (next.error != null &&
           next.pendingRetry != null &&
-          next.error != _lastSnackError) {
-        _lastSnackError = next.error;
+          next.error != lastSnackError.value) {
+        lastSnackError.value = next.error;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(next.error!),
@@ -43,7 +63,7 @@ class _TodosPageState extends ConsumerState<TodosPage> {
         );
       }
       if (next.error == null && next.pendingRetry == null) {
-        _lastSnackError = null;
+        lastSnackError.value = null;
       }
     });
 
@@ -131,85 +151,107 @@ class _TodosPageState extends ConsumerState<TodosPage> {
                       Expanded(
                         child: Stack(
                           children: <Widget>[
-                            RefreshIndicator(
-                              onRefresh: viewModel.refresh,
-                              child: state.isLoading && state.todos.isEmpty
-                                  ? ListView(
-                                      physics:
-                                          const AlwaysScrollableScrollPhysics(),
-                                      padding: EdgeInsets.only(
-                                        bottom: bottomFabInset,
-                                      ),
-                                      children: <Widget>[
-                                        SizedBox(
-                                          height:
-                                              MediaQuery.sizeOf(
-                                                context,
-                                              ).height *
-                                              0.35,
-                                          child: const Center(
-                                            child: CircularProgressIndicator(),
-                                          ),
+                            Semantics(
+                              label: 'todoListSemanticLabel'.tr(),
+                              explicitChildNodes: true,
+                              child: RefreshIndicator(
+                                onRefresh: viewModel.refresh,
+                                child: state.isLoading && state.allTodos.isEmpty
+                                    ? ListView(
+                                        physics:
+                                            const AlwaysScrollableScrollPhysics(),
+                                        padding: EdgeInsets.only(
+                                          bottom: bottomFabInset,
                                         ),
-                                      ],
-                                    )
-                                  : state.visibleTodos.isEmpty
-                                  ? ListView(
-                                      physics:
-                                          const AlwaysScrollableScrollPhysics(),
-                                      padding: EdgeInsets.only(
-                                        bottom: bottomFabInset,
-                                      ),
-                                      children: <Widget>[
-                                        const SizedBox(height: 120),
-                                        Center(
-                                          child: Text(
-                                            state.todos.isEmpty
-                                                ? 'emptyState'.tr()
-                                                : 'emptyFilteredState'.tr(),
-                                            key: state.todos.isEmpty
-                                                ? const Key(
-                                                    'empty_state_message',
-                                                  )
-                                                : const Key(
-                                                    'empty_filtered_message',
-                                                  ),
-                                            style: TextStyle(
-                                              fontSize: 16,
-                                              color: Theme.of(
-                                                context,
-                                              ).colorScheme.onSurfaceVariant,
+                                        children: <Widget>[
+                                          SizedBox(
+                                            height:
+                                                MediaQuery.sizeOf(
+                                                  context,
+                                                ).height *
+                                                0.35,
+                                            child: const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
                                             ),
-                                            textAlign: TextAlign.center,
                                           ),
+                                        ],
+                                      )
+                                    : state.visibleTodos.isEmpty
+                                    ? ListView(
+                                        physics:
+                                            const AlwaysScrollableScrollPhysics(),
+                                        padding: EdgeInsets.only(
+                                          bottom: bottomFabInset,
                                         ),
-                                      ],
-                                    )
-                                  : ListView.builder(
-                                      physics:
-                                          const AlwaysScrollableScrollPhysics(),
-                                      padding: EdgeInsets.only(
-                                        bottom: bottomFabInset,
-                                      ),
-                                      itemCount: state.visibleTodos.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                            final Todo todo =
-                                                state.visibleTodos[index];
-                                            return _TodoItem(
-                                              todo: todo,
-                                              onToggle: () =>
-                                                  viewModel.toggleTodo(todo),
-                                              onDelete: () =>
-                                                  viewModel.deleteTodo(todo.id),
-                                              onEditTitle: (String newTitle) =>
-                                                  viewModel.updateTodoTitle(
-                                                    todo.id,
-                                                    newTitle,
+                                        children: <Widget>[
+                                          const SizedBox(height: 120),
+                                          Center(
+                                            child: Text(
+                                              state.allTodos.isEmpty
+                                                  ? 'emptyState'.tr()
+                                                  : 'emptyFilteredState'.tr(),
+                                              key: state.allTodos.isEmpty
+                                                  ? const Key(
+                                                      'empty_state_message',
+                                                    )
+                                                  : const Key(
+                                                      'empty_filtered_message',
+                                                    ),
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    : ListView.builder(
+                                        controller: scrollController,
+                                        physics:
+                                            const AlwaysScrollableScrollPhysics(),
+                                        padding: EdgeInsets.only(
+                                          bottom: bottomFabInset,
+                                        ),
+                                        itemCount:
+                                            state.visibleTodos.length +
+                                            (state.isLoadingMore ? 1 : 0),
+                                        itemBuilder:
+                                            (BuildContext context, int index) {
+                                              if (index >=
+                                                  state.visibleTodos.length) {
+                                                return const Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 16,
                                                   ),
-                                            );
-                                          },
-                                    ),
+                                                  child: Center(
+                                                    child:
+                                                        CircularProgressIndicator(),
+                                                  ),
+                                                );
+                                              }
+                                              final Todo todo =
+                                                  state.visibleTodos[index];
+                                              return _TodoItem(
+                                                todo: todo,
+                                                onToggle: () =>
+                                                    viewModel.toggleTodo(todo),
+                                                onDelete: () => viewModel
+                                                    .deleteTodo(todo.id),
+                                                onEditTitle:
+                                                    (String newTitle) =>
+                                                        viewModel
+                                                            .updateTodoTitle(
+                                                              todo.id,
+                                                              newTitle,
+                                                            ),
+                                              );
+                                            },
+                                      ),
+                              ),
                             ),
                             if (state.isRefreshing)
                               const Positioned(
@@ -345,38 +387,39 @@ class _TodoItem extends StatelessWidget {
   final Future<void> Function(String newTitle) onEditTitle;
 
   Future<void> _showEditDialog(BuildContext context) async {
-    final TextEditingController controller = TextEditingController(
-      text: todo.title,
+    final String? result = await showDialog<String>(
+      context: context,
+      builder: (BuildContext ctx) {
+        return HookBuilder(
+          builder: (BuildContext context) {
+            final TextEditingController controller = useTextEditingController(
+              text: todo.title,
+            );
+            return AlertDialog(
+              title: Text('editTodoTitle'.tr()),
+              content: TextField(
+                controller: controller,
+                autofocus: true,
+                decoration: InputDecoration(labelText: 'todoTitleLabel'.tr()),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: Text('cancel'.tr()),
+                ),
+                FilledButton(
+                  onPressed: () =>
+                      Navigator.of(ctx).pop(controller.text.trim()),
+                  child: Text('save'.tr()),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
-    try {
-      final String? result = await showDialog<String>(
-        context: context,
-        builder: (BuildContext ctx) {
-          return AlertDialog(
-            title: Text('editTodoTitle'.tr()),
-            content: TextField(
-              controller: controller,
-              autofocus: true,
-              decoration: InputDecoration(labelText: 'todoTitleLabel'.tr()),
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(),
-                child: Text('cancel'.tr()),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.of(ctx).pop(controller.text),
-                child: Text('save'.tr()),
-              ),
-            ],
-          );
-        },
-      );
-      if (result != null && result.trim().isNotEmpty) {
-        await onEditTitle(result);
-      }
-    } finally {
-      controller.dispose();
+    if (result != null && result.trim().isNotEmpty) {
+      await onEditTitle(result.trim());
     }
   }
 

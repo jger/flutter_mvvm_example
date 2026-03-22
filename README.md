@@ -6,8 +6,8 @@ Sample app that demonstrates **MVVM with Riverpod**, a **fake backend** (Firebas
 
 | Area | Details |
 |------|---------|
-| **State & UI** | `flutter_riverpod` (`@riverpod`), view models per feature, Material 3, light/dark (system) |
-| **Data** | `FakeFirebaseService` (delays, optional paging, `watchTodos` seed) + `TodoRepository` |
+| **State & UI** | `hooks_riverpod` + `flutter_hooks` (`HookConsumerWidget`, `useScrollController`, …), `@riverpod` view models, Material 3, light/dark (system) |
+| **Data** | `FakeFirebaseService` (delays, `getTodosPage` with filter/sort simulated in-memory for the fake only, `watchTodos`) + `TodoRepository` — a real backend would apply filter/sort in queries, not duplicate domain logic client-side for paging |
 | **Persistence** | JSON via `TodoPersistence` / `SharedPreferences`, wired in `main()` with provider overrides |
 | **Navigation** | `go_router`: `/` (todos), `/config` (settings) |
 | **i18n** | easy_localization — EN / DE / EL |
@@ -72,4 +72,16 @@ flutter test --tags golden
 flutter test --tags golden --update-goldens
 ```
 
-**CI** (`.github/workflows/flutter.yml`): runs `flutter test` with **`--exclude-tags golden`** so goldens stay optional on every push; run goldens locally when you change layout.
+**CI** (`.github/workflows/flutter.yml`): runs `flutter test` with **`--exclude-tags golden`** so goldens stay optional on every push; run goldens locally when you change layout. Translation keys are checked with `dart run tool/check_translation_keys.dart` (de/el must match `en.json`). GitHub Actions uses **`FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`** for JS-based actions (see GitHub changelog on Node 20 deprecation).
+
+## Accessibility
+
+The todo list uses a **`Semantics`** region with a localized label for the scrollable list. Individual todo rows expose title and completion to assistive tech. Prefer testing with TalkBack / VoiceOver when changing list or dialog behavior.
+
+## Configuration / secrets (demo)
+
+- **`AppConfig`** (`app/lib/core/config/app_config.dart`): `DEMO_MODE` via `--dart-define` (default `true`). No API keys are stored in the repo; production apps should load secrets from CI or a vault, not from Dart source.
+
+## Releases (semantic-release)
+
+Versions and GitHub Releases are driven by **[semantic-release](https://github.com/semantic-release/semantic-release)** at the repo root (`package.json`, `release.config.cjs`). **Use [Conventional Commits](https://www.conventionalcommits.org/)** (`feat:`, `fix:`, `chore:`, …) on `main`/`master` so releases and changelog entries are generated correctly. The release workflow bumps **`app/pubspec.yaml`** and commits `CHANGELOG.md` with **`[skip ci]`** on the release commit.

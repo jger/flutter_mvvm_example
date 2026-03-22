@@ -10,7 +10,11 @@ void main() {
       isCompleted: false,
       createdAt: DateTime(2024),
     );
-    final TodosState base = TodosState(todos: <Todo>[t], error: 'old');
+    final TodosState base = TodosState(
+      allTodos: <Todo>[t],
+      todos: <Todo>[t],
+      error: 'old',
+    );
 
     test('preserves error when omitted', () {
       final TodosState next = base.copyWith(isLoading: true);

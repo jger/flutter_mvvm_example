@@ -1,6 +1,7 @@
 import 'package:app/data/services/fake_firebase_service.dart';
 import 'package:app/domain/models/todo.dart';
 import 'package:app/domain/todo_failure.dart';
+import 'package:app/domain/todo_filters.dart';
 
 /// Maps domain operations to [FirebaseService] (real or fake) with typed failures.
 class TodoRepository {
@@ -20,9 +21,16 @@ class TodoRepository {
   Future<List<Todo>> getTodosPage({
     required int offset,
     required int limit,
+    required TodoFilter filter,
+    required TodoSort sort,
   }) async {
     try {
-      return await _service.getTodosPage(offset: offset, limit: limit);
+      return await _service.getTodosPage(
+        offset: offset,
+        limit: limit,
+        filter: filter,
+        sort: sort,
+      );
     } on Object catch (e) {
       throw TodoFailureUnknown(e.toString());
     }

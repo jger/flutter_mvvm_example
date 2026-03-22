@@ -1,6 +1,7 @@
 import 'package:app/data/repositories/todo_repository.dart';
 import 'package:app/data/services/fake_firebase_service.dart';
 import 'package:app/domain/models/todo.dart';
+import 'package:app/domain/todo_filters.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -13,14 +14,39 @@ void main() {
     service.dispose();
   });
 
-  test('getTodosPage returns slice', () async {
+  test('getTodosPage returns slice with filter/sort', () async {
     final FakeFirebaseService service = FakeFirebaseService(
       actionDelay: Duration.zero,
       fetchDelay: Duration.zero,
     );
     final TodoRepository repo = TodoRepository(service);
-    expect((await repo.getTodosPage(offset: 0, limit: 1)).length, 1);
-    expect((await repo.getTodosPage(offset: 2, limit: 5)).length, 0);
+    expect(
+      (await repo.getTodosPage(
+        offset: 0,
+        limit: 1,
+        filter: TodoFilter.all,
+        sort: TodoSort.createdDesc,
+      )).length,
+      1,
+    );
+    expect(
+      (await repo.getTodosPage(
+        offset: 2,
+        limit: 5,
+        filter: TodoFilter.all,
+        sort: TodoSort.createdDesc,
+      )).length,
+      0,
+    );
+    expect(
+      (await repo.getTodosPage(
+        offset: 0,
+        limit: 10,
+        filter: TodoFilter.active,
+        sort: TodoSort.titleAsc,
+      )).length,
+      1,
+    );
     service.dispose();
   });
 
