@@ -8,6 +8,7 @@ import 'package:app/domain/todo_filters.dart';
 import 'package:app/features/todos/todo_providers.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod/misc.dart' show Override;
@@ -15,6 +16,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
+    DeviceOrientation.portraitUp,
+  ]);
   await EasyLocalization.ensureInitialized();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final FakeFirebaseService firebase = FakeFirebaseService(
