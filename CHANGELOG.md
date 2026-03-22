@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/jger/flutter_mvvm_example/compare/v1.1.0...v1.1.1) (2026-03-22)
+
+
+### Bug Fixes
+
+* **tests:** enhance golden tests with localized MaterialApp and new helper functions for rendering; update test cases for TodosPage and ConfigPage ([62b0985](https://github.com/jger/flutter_mvvm_example/commit/62b0985230451678f22f94a1144e8bf33589afb7))
+
 # [1.1.0](https://github.com/jger/flutter_mvvm_example/compare/v1.0.0...v1.1.0) (2026-03-22)
 
 

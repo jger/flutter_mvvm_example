@@ -1,7 +1,7 @@
 name: app
 description: "MVVM todo demo with Riverpod 3, fake backend, and feature-oriented structure."
 publish_to: 'none'
-version: 1.1.0
+version: 1.1.1
 
 environment:
   sdk: ^3.10.0
