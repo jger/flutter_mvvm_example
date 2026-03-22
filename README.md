@@ -16,7 +16,7 @@ Sample app that demonstrates **MVVM with Riverpod**, a **fake backend** (Firebas
 | **Errors & recovery** | User-visible messages from failures; snackbar + **retry** for failed mutations (`pendingRetry` on `TodosViewModel`) |
 | **a11y** | **`Accessibility Semantics`** region for the scrollable list (localized label); rows expose title and completion; validate with TalkBack / VoiceOver |
 | **Demo config** | **`AppConfig`**: `DEMO_MODE` via `--dart-define` (default `true`); no API keys in source |
-| **Tests** | Unit (view models + overrides), widget, **golden** (`golden_toolkit`, tag `golden`); Linux goldens via `make goldens-*` / Docker to match CI |
+| **Tests** | Unit/widget (`test/`, incl. **ViewModel error paths** in `todo_view_model_error_test.dart`), **integration** (`integration_test/` — run separately from `test/`; Flutter does not merge in one invocation), **golden** (`golden_toolkit`, tag `golden`); CI enforces **≥75%** line coverage on `test/`; Linux goldens via `make goldens-*` / Docker |
 
 Todos: filter, sort, edit title (dialog), pull-to-refresh, max content width on web.
 
@@ -70,12 +70,21 @@ After changing `@riverpod` providers, regenerate code (same `build_runner` comma
 ## Tests & quality
 
 ```bash
-fvm flutter test --coverage
+# Coverage + unit/widget tests only (path `test/` — used for the CI coverage gate)
+fvm flutter test test --coverage --exclude-tags golden
+
+# Integration tests — separate invocation (required); pick a desktop device, e.g.:
+fvm flutter test integration_test -d macos   # local
+# CI runs: flutter test integration_test -d linux (after enabling Linux desktop + GTK deps)
+
 fvm flutter analyze
 ```
 
-- **Unit / VM tests**: view models with `ProviderScope` overrides (e.g. fake service with zero delay).
+Flutter does **not** allow `flutter test test integration_test` in a single command with coverage; run the two commands above.
+
+- **Unit / VM tests**: view models with `ProviderScope` overrides (e.g. fake service with zero delay), including error/retry paths in `test/todo_view_model_error_test.dart`.
 - **Widget tests**: `MaterialApp(home: TodosPage)` and interaction tests.
+- **Integration tests**: `integration_test/app_test.dart` — smoke + navigation (`MainApp` + router), same localization/provider wiring as production.
 - **Golden tests** (opt-in tag `golden`): baseline PNGs under `test/goldens/`. Fonts load via `test/flutter_test_config.dart` and `golden_toolkit` so text does not render as tofu.
 
 **Run goldens locally** (compare to committed images):
@@ -114,7 +123,7 @@ Versions and GitHub Releases are driven by **[semantic-release](https://github.c
 | Workflow | Role |
 |----------|------|
 | **`.github/workflows/docs.yml`** | Runs `dart doc` in `app/` when pushes to `main` touch `app/lib/`, or manually via **Actions → API documentation → Run workflow**. Publishes HTML API docs to GitHub Pages (same FVM Flutter as the app). Set **Settings → Pages → Build and deployment → Source** to **GitHub Actions** so deploy works. Live docs: [flutter_mvvm_example API](https://jger.github.io/flutter_mvvm_example/index.html). |
-| **`.github/workflows/flutter.yml`** | Reads Flutter **3.41.5** from FVM (`jq` on `app/.fvm/fvm_config.json` → `subosito/flutter-action`). Runs `flutter test` with **`--exclude-tags golden`**, coverage, `flutter analyze`, and `tool/check_translation_keys.dart` (de/el must match `en.json`). |
+| **`.github/workflows/flutter.yml`** | Flutter version from FVM (`jq` on `app/.fvm/fvm_config.json` → `subosito/flutter-action`). Installs Linux desktop deps, `flutter test test --coverage --exclude-tags golden`, **`very_good_coverage` min 75%**, then **`flutter test integration_test -d linux`**. Also `flutter analyze`, `tool/check_translation_keys.dart` (de/el must match `en.json`). |
 | **`.github/workflows/golden.yml`** + **`.github/actions/flutter-golden-tests`** | `flutter test --tags golden` on `ubuntu-latest`. |
 
 **`FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`** is set for JS-based actions (see GitHub’s Node 20 deprecation notes).

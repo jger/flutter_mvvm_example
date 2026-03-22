@@ -8,8 +8,12 @@ import 'package:flutter_mvvm_example/features/todos/todo_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod/misc.dart' show Override;
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  setUp(() {
+    SharedPreferences.setMockInitialValues(<String, Object>{});
+  });
   test(
     'TodosViewModel loads todos from stream without wall-clock delay',
     () async {
@@ -105,5 +109,83 @@ void main() {
     s = container.read(todosViewModelProvider);
     expect(s.todos.length, 25);
     expect(s.hasMore, isFalse);
+  });
+
+  test('setFilter updates state and persists', () async {
+    final FakeFirebaseService service = FakeFirebaseService(
+      actionDelay: Duration.zero,
+      fetchDelay: Duration.zero,
+    );
+    final ProviderContainer container = ProviderContainer(
+      overrides: <Override>[
+        firebaseServiceProvider.overrideWithValue(service),
+        todoRepositoryProvider.overrideWithValue(TodoRepository(service)),
+        todoInitialUiProvider.overrideWithValue(TodoInitialUi.defaults),
+      ],
+    );
+    final ProviderSubscription<TodosState> sub = container.listen<TodosState>(
+      todosViewModelProvider,
+      (TodosState? previous, TodosState next) {},
+    );
+    addTearDown(sub.close);
+    addTearDown(container.dispose);
+    addTearDown(service.dispose);
+    await Future<void>.delayed(Duration.zero);
+    container.read(todosViewModelProvider.notifier).setFilter(TodoFilter.active);
+    await Future<void>.delayed(Duration.zero);
+    expect(container.read(todosViewModelProvider).filter, TodoFilter.active);
+  });
+
+  test('setSort updates state and persists', () async {
+    final FakeFirebaseService service = FakeFirebaseService(
+      actionDelay: Duration.zero,
+      fetchDelay: Duration.zero,
+    );
+    final ProviderContainer container = ProviderContainer(
+      overrides: <Override>[
+        firebaseServiceProvider.overrideWithValue(service),
+        todoRepositoryProvider.overrideWithValue(TodoRepository(service)),
+        todoInitialUiProvider.overrideWithValue(TodoInitialUi.defaults),
+      ],
+    );
+    final ProviderSubscription<TodosState> sub = container.listen<TodosState>(
+      todosViewModelProvider,
+      (TodosState? previous, TodosState next) {},
+    );
+    addTearDown(sub.close);
+    addTearDown(container.dispose);
+    addTearDown(service.dispose);
+    await Future<void>.delayed(Duration.zero);
+    container.read(todosViewModelProvider.notifier).setSort(TodoSort.titleAsc);
+    await Future<void>.delayed(Duration.zero);
+    expect(container.read(todosViewModelProvider).sort, TodoSort.titleAsc);
+  });
+
+  test('addTodo success clears pending retry', () async {
+    final FakeFirebaseService service = FakeFirebaseService(
+      actionDelay: Duration.zero,
+      fetchDelay: Duration.zero,
+    );
+    final ProviderContainer container = ProviderContainer(
+      overrides: <Override>[
+        firebaseServiceProvider.overrideWithValue(service),
+        todoRepositoryProvider.overrideWithValue(TodoRepository(service)),
+        todoInitialUiProvider.overrideWithValue(TodoInitialUi.defaults),
+      ],
+    );
+    final ProviderSubscription<TodosState> sub = container.listen<TodosState>(
+      todosViewModelProvider,
+      (TodosState? previous, TodosState next) {},
+    );
+    addTearDown(sub.close);
+    addTearDown(container.dispose);
+    addTearDown(service.dispose);
+    await Future<void>.delayed(Duration.zero);
+    final TodosViewModel vm = container.read(todosViewModelProvider.notifier);
+    await vm.addTodo('new item');
+    await Future<void>.delayed(Duration.zero);
+    final TodosState state = container.read(todosViewModelProvider);
+    expect(state.pendingRetry, isNull);
+    expect(state.allTodos.any((Todo t) => t.title == 'new item'), isTrue);
   });
 }

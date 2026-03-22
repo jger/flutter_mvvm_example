@@ -29,13 +29,18 @@ Widget _pumpApp({required FakeFirebaseService service}) {
     path: 'assets/translations',
     fallbackLocale: const Locale('en'),
     startLocale: const Locale('en'),
+    saveLocale: false,
     child: ProviderScope(
       overrides: <Override>[
         firebaseServiceProvider.overrideWithValue(service),
         todoRepositoryProvider.overrideWithValue(TodoRepository(service)),
         todoInitialUiProvider.overrideWithValue(TodoInitialUi.defaults),
       ],
-      child: const MaterialApp(home: TodosPage()),
+      child: MaterialApp(
+        theme: themeForWidgetTests(),
+        darkTheme: themeForWidgetTests(),
+        home: const TodosPage(),
+      ),
     ),
   );
 }

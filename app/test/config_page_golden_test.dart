@@ -28,6 +28,7 @@ void main() {
         path: 'assets/translations',
         fallbackLocale: const Locale('en'),
         startLocale: const Locale('en'),
+        saveLocale: false,
         child: ProviderScope(
           child: localizedMaterialApp(home: const ConfigPage()),
         ),

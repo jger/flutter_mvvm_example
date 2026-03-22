@@ -2,10 +2,23 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// [MaterialApp] must use EasyLocalization delegates or `.tr()` keys stay unresolved (wrong goldens/CI).
+/// Material 3 default splash uses [InkSparkle], which loads `shaders/ink_sparkle.frag` and can throw
+/// in `flutter test` (engine / asset format mismatch). Use classic [InkRipple] in tests.
+ThemeData themeForWidgetTests() {
+  return ThemeData(
+    useMaterial3: true,
+    splashFactory: InkRipple.splashFactory,
+  );
+}
+
+/// [MaterialApp] must wire [EasyLocalization] delegates + locale or `.tr()` logs missing-key warnings.
+/// Use for goldens / tests that assert on translated strings; interaction tests often use a plain
+/// [MaterialApp] under [EasyLocalization] plus `saveLocale: false` for stable sequential runs.
 Widget localizedMaterialApp({required Widget home}) {
   return Builder(
     builder: (BuildContext context) => MaterialApp(
+      theme: themeForWidgetTests(),
+      darkTheme: themeForWidgetTests(),
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
