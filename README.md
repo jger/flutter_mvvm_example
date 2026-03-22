@@ -33,7 +33,7 @@ Deployment is handled by GitHub Actions; see **GitHub Actions** and **Makefile**
 
 ## Architecture
 
-- **`features/todos/`** — [`models/`](app/lib/features/todos/models/) (`Todo`, filters, **`TodoFailure`**), [`data/local`](app/lib/features/todos/data/local/) + [`data/services`](app/lib/features/todos/data/services/), [`repositories/`](app/lib/features/todos/repositories/), [`view/`](app/lib/features/todos/view/) (`TodosPage`, …), [`viewmodel/`](app/lib/features/todos/viewmodel/) (`TodosViewModel`, `TodosState`, providers).
+- **`features/todos/`** — [`models/`](app/lib/features/todos/models/) (`Todo`, filters, **`TodoFailure`**), [`data/local`](app/lib/features/todos/data/local/) + [`data/services`](app/lib/features/todos/data/services/), [`repositories/`](app/lib/features/todos/repositories/), [`view/`](app/lib/features/todos/view/) (`TodosPage`, `FloatingTodoComposer`, …; shared pieces under [`view/widgets/`](app/lib/features/todos/view/widgets/)), [`viewmodel/`](app/lib/features/todos/viewmodel/) (`TodosViewModel`, `TodosState`, providers).
 - **`features/settings/`** — [`models/`](app/lib/features/settings/models/), [`view/`](app/lib/features/settings/view/), [`viewmodel/`](app/lib/features/settings/viewmodel/) (theme via `core/theme`; locale via `easy_localization` — no feature-local repository).
 - **`core/`**: `AppLogger`, router, theme, config, …
 
