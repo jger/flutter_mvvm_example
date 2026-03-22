@@ -41,7 +41,7 @@ class FakeFirebaseService implements FirebaseService {
   final Duration fetchDelay;
   final TodoPersistCallback? onPersist;
 
-  final List<Todo> _todos = [];
+  final List<Todo> _todos = <Todo>[];
   late final StreamController<List<Todo>> _controller;
 
   void _seedDefaults() {

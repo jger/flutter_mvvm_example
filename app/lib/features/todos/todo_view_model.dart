@@ -303,13 +303,13 @@ class TodosViewModel extends _$TodosViewModel {
     }
     state = state.copyWith(pendingRetry: null, error: null);
     switch (op) {
-      case TodoAddOp(:final title):
+      case TodoAddOp(:final String title):
         await addTodo(title);
-      case TodoToggleOp(:final todo):
+      case TodoToggleOp(:final Todo todo):
         await toggleTodo(todo);
-      case TodoDeleteOp(:final id):
+      case TodoDeleteOp(:final String id):
         await deleteTodo(id);
-      case TodoEditTitleOp(:final id, :final newTitle):
+      case TodoEditTitleOp(:final String id, :final String newTitle):
         await updateTodoTitle(id, newTitle);
     }
   }

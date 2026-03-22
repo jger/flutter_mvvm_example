@@ -15,7 +15,7 @@ class TodosPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final lastSnackError = useState<String?>(null);
+    final ValueNotifier<String?> lastSnackError = useState<String?>(null);
     final ScrollController scrollController = useScrollController();
 
     useEffect(() {
