@@ -19,6 +19,7 @@ class Todo extends Equatable {
       createdAt: DateTime.parse(json['createdAt'] as String),
     );
   }
+
   /// Stable identifier.
   final String id;
 
@@ -27,7 +28,7 @@ class Todo extends Equatable {
 
   /// Whether the todo is done.
   final bool isCompleted;
-  
+
   /// Creation timestamp (UTC or local per serialization).
   final DateTime createdAt;
 

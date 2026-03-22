@@ -52,6 +52,7 @@ Future<void> main() async {
 class MainApp extends ConsumerWidget {
   /// Creates the app with [router] from [createAppRouter].
   const MainApp({required this.router, super.key});
+
   /// GoRouter configuration for navigation.
   final GoRouter router;
 

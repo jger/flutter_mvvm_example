@@ -16,7 +16,7 @@ abstract final class UiConstants {
 
   /// Small corner radius (dp).
   static const double radiusSm = 8;
-  
+
   /// Medium corner radius (dp).
   static const double radiusMd = 12;
 

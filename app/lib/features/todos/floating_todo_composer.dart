@@ -91,7 +91,7 @@ class ExpressiveTaskPanel extends StatelessWidget {
 
   /// Called when the user submits (send or IME action).
   final VoidCallback onSubmitted;
-  
+
   /// Called when the user closes the panel.
   final VoidCallback onClose;
 
@@ -249,6 +249,7 @@ class FloatingTodoComposer extends StatefulWidget {
 
   /// Hint for the text field.
   final String hintText;
+
   /// Called with trimmed non-empty text on submit.
   final void Function(String) onSubmitted;
 

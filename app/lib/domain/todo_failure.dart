@@ -2,6 +2,7 @@
 sealed class TodoFailure implements Exception {
   /// Creates a failure with a user- or log-facing [message].
   const TodoFailure(this.message);
+
   /// Human-readable explanation.
   final String message;
 

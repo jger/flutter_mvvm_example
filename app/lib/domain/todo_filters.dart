@@ -4,8 +4,10 @@ import 'package:equatable/equatable.dart';
 enum TodoFilter {
   /// Every todo.
   all,
+
   /// Only incomplete.
   active,
+
   /// Only complete.
   completed,
 }
@@ -14,8 +16,10 @@ enum TodoFilter {
 enum TodoSort {
   /// Newest first by creation time (`createdAt` field).
   createdDesc,
+
   /// Oldest first by creation time (`createdAt` field).
   createdAsc,
+
   /// Alphabetical by title (case-insensitive).
   titleAsc,
 }
@@ -27,7 +31,7 @@ class TodoInitialUi extends Equatable {
 
   /// Current filter chip selection.
   final TodoFilter filter;
-  
+
   /// Current sort mode.
   final TodoSort sort;
 

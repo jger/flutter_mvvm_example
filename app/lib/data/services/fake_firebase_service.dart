@@ -17,6 +17,7 @@ abstract class FirebaseService {
     required TodoFilter filter,
     required TodoSort sort,
   });
+
   /// Creates a todo with [title].
   Future<Todo> addTodo(String title);
 
@@ -54,7 +55,7 @@ class FakeFirebaseService implements FirebaseService {
 
   /// Artificial delay for reads.
   final Duration fetchDelay;
-  
+
   /// Called after each successful mutation with the full list.
   final TodoPersistCallback? onPersist;
 

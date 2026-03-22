@@ -83,6 +83,7 @@ class TodosState extends Equatable {
 
   /// Loaded slice(s) from the repository paged query for the current filter/sort.
   final List<Todo> todos;
+
   /// Initial full load in progress.
   final bool isLoading;
 
@@ -106,7 +107,7 @@ class TodosState extends Equatable {
 
   /// Next page fetch in progress.
   final bool isLoadingMore;
-  
+
   /// Page size for repository paged loads.
   final int pageSize;
 
