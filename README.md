@@ -1,5 +1,7 @@
 # Flutter MVVM example
 
+[![coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/jger/REPLACE_GIST_ID/raw/coverage.json)](https://github.com/jger/flutter_mvvm_example/actions)
+
 Sample app that demonstrates **MVVM with Riverpod**, a **fake backend** (Firebase-shaped API), and a clear split between **data**, **domain**, and **features**. Use it as a reference for layering, typed errors, and testable view models—not as production infrastructure.
 
 ## What you get
@@ -123,6 +125,7 @@ The todo list uses a **`Semantics`** region with a localized label for the scrol
 ## Configuration / secrets (demo)
 
 - **`AppConfig`** (`app/lib/core/config/app_config.dart`): `DEMO_MODE` via `--dart-define` (default `true`). No API keys are stored in the repo; production apps should load secrets from CI or a vault, not from Dart source.
+- **Coverage badge** (CI): [gist](https://gist.github.com/) (any file), note **gist ID** from URL → **Settings → Variables → `COVERAGE_GIST_ID`**; **Settings → Secrets → `GIST_SECRET`** = PAT with **gist** scope. Replace **`REPLACE_GIST_ID`** in the README shields URL with that ID. **`Schneegans/dynamic-badges-action`** updates `coverage.json` in the gist (skipped on fork PRs if secrets unavailable).
 
 ## Releases (semantic-release)
 
@@ -133,7 +136,7 @@ Versions and GitHub Releases are driven by **[semantic-release](https://github.c
 | Workflow | Role |
 |----------|------|
 | **`.github/workflows/docs.yml`** | Runs `dart doc` in `app/` when pushes to `main` touch `app/lib/`, or manually via **Actions → API documentation → Run workflow**. Publishes HTML API docs to GitHub Pages (same FVM Flutter as the app). Set **Settings → Pages → Build and deployment → Source** to **GitHub Actions** so deploy works. Live docs: [flutter_mvvm_example API](https://jger.github.io/flutter_mvvm_example/index.html). |
-| **`.github/workflows/flutter.yml`** | FVM Flutter (`subosito/flutter-action`). **APT:** build-essential, clang, cmake, ninja, pkg-config, GTK, **libblkid**, liblzma, **libglu1-mesa**, **xvfb** (aligned with `docker/integration-tests/Dockerfile`). **`flutter precache --linux`** then `flutter test test --coverage --exclude-tags golden`, **`very_good_coverage` ≥75%**, **`xvfb-run -a flutter test integration_test -d linux`**. Also `flutter analyze`, `dart format`, `build_runner`, `tool/check_translation_keys.dart`. |
+| **`.github/workflows/flutter.yml`** | FVM Flutter (`subosito/flutter-action`). **APT:** build-essential, clang, cmake, ninja, pkg-config, GTK, **libblkid**, liblzma, **libglu1-mesa**, **xvfb** (aligned with `docker/integration-tests/Dockerfile`). **`flutter precache --linux`** then `flutter test test --coverage --exclude-tags golden`, **`very_good_coverage` ≥75%**, **`Schneegans/dynamic-badges-action`** (optional: **`GIST_SECRET`**, **`COVERAGE_GIST_ID`**), **`xvfb-run -a flutter test integration_test -d linux`**. Also `flutter analyze`, `dart format`, `build_runner`, `tool/check_translation_keys.dart`. |
 | **`.github/workflows/golden.yml`** + **`.github/actions/flutter-golden-tests`** | `flutter test --tags golden` on `ubuntu-latest`. |
 
 **`FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`** is set for JS-based actions (see GitHub’s Node 20 deprecation notes).

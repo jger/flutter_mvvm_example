@@ -8,6 +8,10 @@ on:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
+permissions:
+  contents: read
+  actions: write
+
 jobs:
   analyze-test:
     runs-on: ubuntu-latest
@@ -47,6 +51,25 @@ jobs:
           path: ${{ github.workspace }}/app/coverage/lcov.info
           min_coverage: 75
           exclude: "**/*.g.dart"
+      - name: Line coverage % from LCOV
+        id: lcov
+        run: |
+          pct=$(awk -F: '/^LF:/ { lf += $2 } /^LH:/ { lh += $2 } END { if (lf < 1) { print 0; exit } printf "%d", int(lh * 100 / lf + 0.5) }' coverage/lcov.info)
+          echo "pct=$pct" >> "$GITHUB_OUTPUT"
+      - name: Coverage badge (gist / shields endpoint)
+        # Kein secrets in if (IDE/Schema); Fork-PRs ausgeschlossen → GIST_SECRET nur bei push/internem PR.
+        if: ${{ vars.COVERAGE_GIST_ID != '' && (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)) }}
+        uses: Schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: ${{ vars.COVERAGE_GIST_ID }}
+          filename: coverage.json
+          label: coverage
+          message: "${{ steps.lcov.outputs.pct }}%"
+          style: flat
+          valColorRange: ${{ steps.lcov.outputs.pct }}
+          minColorRange: 60
+          maxColorRange: 75
       - uses: actions/upload-artifact@v4
         with:
           name: coverage-lcov
