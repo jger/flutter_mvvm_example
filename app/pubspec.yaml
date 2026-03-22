@@ -1,4 +1,4 @@
-name: app
+name: flutter_mvvm_example
 description: "MVVM todo demo with Riverpod 3, fake backend, and feature-oriented structure."
 publish_to: 'none'
 version: 1.1.1

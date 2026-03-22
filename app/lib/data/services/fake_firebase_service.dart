@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:app/domain/models/todo.dart';
-import 'package:app/domain/todo_filters.dart';
+import 'package:flutter_mvvm_example/domain/models/todo.dart';
+import 'package:flutter_mvvm_example/domain/todo_filters.dart';
 
 /// Contract for todo backend access (real Firebase or in-memory fake).
 abstract class FirebaseService {

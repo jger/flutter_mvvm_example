@@ -1,10 +1,10 @@
 import 'dart:math' as math;
 import 'dart:ui' show lerpDouble;
 
-import 'package:app/core/ui/ui_constants.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_mvvm_example/core/ui/ui_constants.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 /// Outer padding inset for screen edges (todo_view layout).

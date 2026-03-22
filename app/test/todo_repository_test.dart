@@ -1,7 +1,7 @@
-import 'package:app/data/repositories/todo_repository.dart';
-import 'package:app/data/services/fake_firebase_service.dart';
-import 'package:app/domain/models/todo.dart';
-import 'package:app/domain/todo_filters.dart';
+import 'package:flutter_mvvm_example/data/repositories/todo_repository.dart';
+import 'package:flutter_mvvm_example/data/services/fake_firebase_service.dart';
+import 'package:flutter_mvvm_example/domain/models/todo.dart';
+import 'package:flutter_mvvm_example/domain/todo_filters.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

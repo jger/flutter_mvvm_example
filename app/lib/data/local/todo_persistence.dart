@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:app/domain/models/todo.dart';
-import 'package:app/domain/todo_filters.dart';
+import 'package:flutter_mvvm_example/domain/models/todo.dart';
+import 'package:flutter_mvvm_example/domain/todo_filters.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const String _prefsKeyTodosJson = 'todos_json_v1';

@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:app/core/logging/app_logger.dart';
-import 'package:app/core/logging/app_logger_provider.dart';
-import 'package:app/data/repositories/todo_repository.dart';
-import 'package:app/domain/models/todo.dart';
-import 'package:app/domain/todo_failure.dart';
-import 'package:app/domain/todo_filters.dart';
-import 'package:app/features/todos/todo_providers.dart';
-import 'package:app/features/todos/todo_state.dart';
+import 'package:flutter_mvvm_example/core/logging/app_logger.dart';
+import 'package:flutter_mvvm_example/core/logging/app_logger_provider.dart';
+import 'package:flutter_mvvm_example/data/repositories/todo_repository.dart';
+import 'package:flutter_mvvm_example/domain/models/todo.dart';
+import 'package:flutter_mvvm_example/domain/todo_failure.dart';
+import 'package:flutter_mvvm_example/domain/todo_filters.dart';
+import 'package:flutter_mvvm_example/features/todos/todo_providers.dart';
+import 'package:flutter_mvvm_example/features/todos/todo_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

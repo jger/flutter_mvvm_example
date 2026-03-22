@@ -1,5 +1,5 @@
-import 'package:app/core/ui/ui_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mvvm_example/core/ui/ui_constants.dart';
 
 /// Application light/dark [ThemeData] factories.
 abstract final class AppTheme {

@@ -1,11 +1,11 @@
-import 'package:app/data/repositories/todo_repository.dart';
-import 'package:app/data/services/fake_firebase_service.dart';
-import 'package:app/domain/models/todo.dart';
-import 'package:app/domain/todo_filters.dart';
-import 'package:app/features/todos/todo_providers.dart';
-import 'package:app/features/todos/todo_view.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mvvm_example/data/repositories/todo_repository.dart';
+import 'package:flutter_mvvm_example/data/services/fake_firebase_service.dart';
+import 'package:flutter_mvvm_example/domain/models/todo.dart';
+import 'package:flutter_mvvm_example/domain/todo_filters.dart';
+import 'package:flutter_mvvm_example/features/todos/todo_providers.dart';
+import 'package:flutter_mvvm_example/features/todos/todo_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod/misc.dart' show Override;
