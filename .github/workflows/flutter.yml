@@ -70,6 +70,24 @@ jobs:
           valColorRange: ${{ steps.lcov.outputs.pct }}
           minColorRange: 60
           maxColorRange: 75
+      - name: Coverage badge README hint
+        if: always()
+        env:
+          GIST_ID: ${{ vars.COVERAGE_GIST_ID }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          if [ -z "$GIST_ID" ]; then
+            echo "### Coverage badge" >> "$GITHUB_STEP_SUMMARY"
+            echo "Set repository variable **COVERAGE_GIST_ID** and secret **GIST_SECRET** (PAT, \`gist\` scope). Until then the README placeholder URL returns **resource not found**." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          RAW="https://gist.githubusercontent.com/${OWNER}/${GIST_ID}/raw/coverage.json"
+          ENC=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "$RAW")
+          echo "### Coverage badge — paste into README" >> "$GITHUB_STEP_SUMMARY"
+          echo '```markdown' >> "$GITHUB_STEP_SUMMARY"
+          echo "![coverage](https://img.shields.io/endpoint?url=${ENC})" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "Check [raw JSON](${RAW}) (expect \`schemaVersion\` after upload)." >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         with:
           name: coverage-lcov
